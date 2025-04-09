@@ -1,0 +1,69 @@
+<!-- This file extends base.html for the ease of creating future pages if ever needed. 
+ I dont think that will be needed in this project, but still. -->
+
+{% extends "base.html"%}
+
+{% block head %}
+<title> New inheritance idea for making pages</title>
+{%endblock%}
+
+<!-- These lines use the jango API to allow more intelegent HTML implementations.
+ Here specifically, they are used to extend base.html to make this file more simple,
+ by hiding all of the unimportant, yet manditory HTML syntax.-->
+{% block body %}
+
+<div class = "content">
+    <h1>CS 351 Project</h1>
+    
+    <!-- When there are no tasks present in the database -->
+    {% if tasks | length < 1%}
+    <h3>Sadly, you have not put anything in the table.</h3>
+    <!-- When there are tasks in the database -->
+    {% else %}
+    <table>
+        <!-- This is the header row-->
+        <tr>
+            <!-- The following are header columns-->
+            <th>
+                Info
+            </th>
+            <th>
+                Date Added
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+        <!-- Loop through all the values in MyTask table-->
+        {% for task in tasks%}
+        <!-- Populate each row of the table -->
+        <tr>
+            <!-- Display the task content-->
+            <th>
+                {{task.content}}
+            </th>
+            <!-- Display the task creation date-->
+            <th>
+                {{task.created.strftime("%Y-%m-%d")}}
+            </th>
+            <!-- Create buttons to delete, update, or -->
+            <th>
+                <!-- Button that routes to the delete for a specific ID -->
+                <a href="/delete/{{task.id}}"> Delete </a>
+                <br/>
+                <!-- Button that routes to the update for a specific ID -->
+                <a href="/update/{{task.id}}"> Update </a>
+            </th>
+        </tr>
+
+        {% endfor %}
+    </table>
+    {% endif %}
+    
+    <!-- Place to take in input from the user from the home page  (Action says where the data should be sent when submitted, method states how.)-->
+    <form action="/" method="POST">
+        <input type = "text" name = "content" id = "content" />
+        <input type = "submit" value = "Add Data" id = "btn_add" />
+    </form>
+</div>
+{%endblock%}
