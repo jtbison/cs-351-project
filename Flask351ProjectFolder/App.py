@@ -4,6 +4,8 @@ from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.schema import PrimaryKeyConstraint
 
 #Creating a flask instance
 app = Flask(__name__)
@@ -124,11 +126,23 @@ orders = Table(
 )
 
 orderLine = Table(
-    Column('OrderNum', CHAR(5)),
-    Column('ItemNum', CHAR(4)),
-    Column('NumOrdered', DECIMAL(6, 2)),
-    Column('QuotedPrice', DECIMAL(6, 2)),
+    
+    
+    
+    
 )
+
+Base = declarative_base()
+class orderLine(Base):
+    __tableName__ = 'OrderLine'
+    column1 = Column('OrderNum', CHAR(5))
+    column2 = Column('ItemNum', CHAR(4))
+    column3 = Column('NumOrdered', DECIMAL(6, 2))
+    column4 = Column('QuotedPrice', DECIMAL(6, 2))
+
+    __table_args__ = (
+        PrimaryKeyConstraing('column1', 'column2')
+    )
 
 #start the app itself running
 if __name__ in "__main__" :
