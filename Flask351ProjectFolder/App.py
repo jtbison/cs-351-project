@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from sqlalchemy import Table, Column, Integer, String, CHAR, DECIMAL
 
 #Creating a flask instance
 app = Flask(__name__)
@@ -90,6 +91,20 @@ def update(id:int):
             return f"ERROR:{e}"    
     else:
         return "HOME"
+
+
+rep = Table(
+    Column('RepNum', CHAR(2), primary_key = True),
+    Column('LastName', CHAR(15)),
+    Column('FirstName', CHAR(15)),
+    Column('Street', CHAR(15)),
+    Column('City', CHAR(15)),
+    Column('State', CHAR(2)),
+    Column('PostalCode', CHAR(5)),
+    Column('Commision', DECIMAL(7, 2)),
+    Column('Rate', DECIMAL(3, 2)),
+)
+
 
 #start the app itself running
 if __name__ in "__main__" :
