@@ -3,7 +3,7 @@ from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import Table, Column, Integer, String, CHAR, DECIMAL
+from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE
 
 #Creating a flask instance
 app = Flask(__name__)
@@ -94,7 +94,7 @@ def update(id:int):
 
 
 rep = Table(
-    Column('RepNum', CHAR(2), primary_key = True),
+    Column('RepNum', CHAR(2), primary_key=True),
     Column('LastName', CHAR(15)),
     Column('FirstName', CHAR(15)),
     Column('Street', CHAR(15)),
@@ -105,6 +105,30 @@ rep = Table(
     Column('Rate', DECIMAL(3, 2)),
 )
 
+customer = Table(
+    Column('CustomerNum', CHAR(3), primary_key=True),
+    Column('CustomerName', CHAR(35), nullable=False),
+    Column('Street', CHAR(20)),
+    Column('City', CHAR(15)),
+    Column('State', CHAR(2)),
+    Column('PostalCode', CHAR(5)),
+    Column('Balance', DECIMAL(8, 2)),
+    Column('CreditLimit', DECIMAL(8, 2)),
+    Column('RepNum', CHAR(2))
+)
+
+orders = Table(
+    Column('OrderNum', CHAR(5)),
+    Column('OrderDate', DATE),
+    Column('CustomerNum', CHAR(3))
+)
+
+orderLine = Table(
+    Column('OrderNum', CHAR(5)),
+    Column('ItemNum', CHAR(4)),
+    Column('NumOrdered', DECIMAL(6, 2)),
+    Column('QuotedPrice', DECIMAL(6, 2)),
+)
 
 #start the app itself running
 if __name__ in "__main__" :
