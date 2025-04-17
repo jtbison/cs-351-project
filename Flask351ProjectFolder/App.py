@@ -7,6 +7,8 @@ from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import PrimaryKeyConstraint
 
+
+Base = declarative_base()
 #Creating a flask instance
 app = Flask(__name__)
 Scss(app)
@@ -95,44 +97,29 @@ def update(id:int):
         return "HOME"
 
 
-rep = Table(
-    Column('RepNum', CHAR(2), primary_key=True),
-    Column('LastName', CHAR(15)),
-    Column('FirstName', CHAR(15)),
-    Column('Street', CHAR(15)),
-    Column('City', CHAR(15)),
-    Column('State', CHAR(2)),
-    Column('PostalCode', CHAR(5)),
-    Column('Commision', DECIMAL(7, 2)),
-    Column('Rate', DECIMAL(3, 2)),
-)
+class rep(Base):
+    column1 = Column('RepNum', CHAR(2), primary_key=True)
+    column2 = Column('LastName', CHAR(15))
+    column3 = Column('FirstName', CHAR(15))
+    column4 = Column('Street', CHAR(15))
+    column5 = Column('City', CHAR(15))
+    column6 = Column('State', CHAR(2))
+    column7 = Column('PostalCode', CHAR(5))
+    column8 = Column('Commision', DECIMAL(7, 2))
+    column9 = Column('Rate', DECIMAL(3, 2))
 
-customer = Table(
-    Column('CustomerNum', CHAR(3), primary_key=True),
-    Column('CustomerName', CHAR(35), nullable=False),
-    Column('Street', CHAR(20)),
-    Column('City', CHAR(15)),
-    Column('State', CHAR(2)),
-    Column('PostalCode', CHAR(5)),
-    Column('Balance', DECIMAL(8, 2)),
-    Column('CreditLimit', DECIMAL(8, 2)),
-    Column('RepNum', CHAR(2))
-)
+class customer(Base):
+    __tableName__ = 'Customer'
+    column1 = Column('CustomerNum', CHAR(3), primary_key=True)
+    column2 = Column('CustomerName', CHAR(35), nullable=False)
+    column3 = Column('Street', CHAR(20))
+    column4 = Column('City', CHAR(15))
+    column5 = Column('State', CHAR(2))
+    column6 = Column('PostalCode', CHAR(5))
+    column7 = Column('Balance', DECIMAL(8, 2))
+    column8 = Column('CreditLimit', DECIMAL(8, 2))
+    column9 = Column('RepNum', CHAR(2))
 
-orders = Table(
-    Column('OrderNum', CHAR(5)),
-    Column('OrderDate', DATE),
-    Column('CustomerNum', CHAR(3))
-)
-
-orderLine = Table(
-    
-    
-    
-    
-)
-
-Base = declarative_base()
 class orderLine(Base):
     __tableName__ = 'OrderLine'
     column1 = Column('OrderNum', CHAR(5))
@@ -141,8 +128,14 @@ class orderLine(Base):
     column4 = Column('QuotedPrice', DECIMAL(6, 2))
 
     __table_args__ = (
-        PrimaryKeyConstraing('column1', 'column2')
+        PrimaryKeyConstraint('column1', 'column2')
     )
+
+class orders(Base):
+    __tableName__ = 'Orders'
+    column1 = Column('OrderNum', CHAR(3))
+    column2 = Column('OrderDate', DATE)
+    column3 = Column('CustomerNum', CHAR(3))
 
 #start the app itself running
 if __name__ in "__main__" :
