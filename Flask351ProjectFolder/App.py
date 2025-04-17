@@ -98,6 +98,7 @@ def update(id:int):
 
 
 class rep(Base):
+    __tablename__ = 'Rep'
     column1 = Column('RepNum', CHAR(2), primary_key=True)
     column2 = Column('LastName', CHAR(15))
     column3 = Column('FirstName', CHAR(15))
@@ -109,7 +110,7 @@ class rep(Base):
     column9 = Column('Rate', DECIMAL(3, 2))
 
 class customer(Base):
-    __tableName__ = 'Customer'
+    __tablename__ = 'Customer'
     column1 = Column('CustomerNum', CHAR(3), primary_key=True)
     column2 = Column('CustomerName', CHAR(35), nullable=False)
     column3 = Column('Street', CHAR(20))
@@ -120,8 +121,14 @@ class customer(Base):
     column8 = Column('CreditLimit', DECIMAL(8, 2))
     column9 = Column('RepNum', CHAR(2))
 
+class orders(Base):
+    __tablename__ = 'Orders'
+    column1 = Column('OrderNum', CHAR(3), primary_key=True)
+    column2 = Column('OrderDate', DATE)
+    column3 = Column('CustomerNum', CHAR(3))
+
 class orderLine(Base):
-    __tableName__ = 'OrderLine'
+    __tablename__ = 'OrderLine'
     column1 = Column('OrderNum', CHAR(5))
     column2 = Column('ItemNum', CHAR(4))
     column3 = Column('NumOrdered', DECIMAL(6, 2))
@@ -131,11 +138,28 @@ class orderLine(Base):
         PrimaryKeyConstraint('column1', 'column2')
     )
 
-class orders(Base):
-    __tableName__ = 'Orders'
-    column1 = Column('OrderNum', CHAR(3))
-    column2 = Column('OrderDate', DATE)
-    column3 = Column('CustomerNum', CHAR(3))
+class item(Base):
+    __tablename__ = 'Item'
+    column1 = Column('ItemNum', CHAR(4), primary_key=True)
+    column2 = Column('Description', CHAR(30))
+    column3 = Column('OnHand', DECIMAL(4, 0))
+    column4 = Column('Category', CHAR(3))
+    column5 = Column('Storehouse', CHAR(1))
+    column6 = Column('Price', DECIMAL(6, 2))
+
+newRep = rep()
+
+def insert_rep(repNum: CHAR, 
+               lastName: CHAR, 
+               firstName: CHAR,
+               street: CHAR,
+               city: CHAR,
+               state: CHAR,
+               postalCode: CHAR,
+               commission: DECIMAL,
+               rate: DECIMAL) -> None:
+    query = newRep._
+
 
 #start the app itself running
 if __name__ in "__main__" :
