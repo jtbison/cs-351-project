@@ -9,6 +9,7 @@ from sqlalchemy.schema import PrimaryKeyConstraint
 
 
 Base = declarative_base()
+
 #Creating a flask instance
 app = Flask(__name__)
 Scss(app)
@@ -158,7 +159,7 @@ def insert_rep(repNum: CHAR,
                postalCode: CHAR,
                commission: DECIMAL,
                rate: DECIMAL) -> None:
-    query = newRep._
+    
 
 
 #start the app itself running
