@@ -31,16 +31,6 @@ class rep(db.Model):
     commission = db.Column('Commision', DECIMAL(7, 2))
     rate = db.Column('Rate', DECIMAL(3, 2))
     
-    def __init__(self, lastName, firstName, street, city, state, postalCode, commission, rate):
-        self.lastName = lastName
-        self.firstName = firstName
-        self.street = street
-        self.city = city
-        self.state = state
-        self.postalCode = postalCode
-        self.commission = commission
-        self.rate = rate
-
     def __repr__(self) -> str:
         return f"Task {self.id}"
 
