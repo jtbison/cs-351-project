@@ -1,0 +1,128 @@
+<!-- This file extends base.html for the ease of creating future pages if ever needed. 
+ I dont think that will be needed in this project, but still. -->
+
+ {% extends "base.html"%}
+
+ {% block head %}
+ <title> New inheritance idea for making pages</title>
+ {%endblock%}
+ 
+ <!-- These lines use the jango API to allow more intelegent HTML implementations.
+  Here specifically, they are used to extend base.html to make this file more simple,
+  by hiding all of the unimportant, yet manditory HTML syntax.-->
+ {% block body %}
+ 
+<div class = "repContent">
+    <h1>CS 351 Project</h1>
+
+    <style>
+        .content{
+            text-align: center;
+            border-style: solid;
+            max-width: 400px;
+            margin: 10px auto;
+            border-radius: 10px;
+        }
+ 
+        table{
+            margin-left: 20px;
+            margin-right: 20px;
+            border-style: solid;
+            border-spacing: 10px;
+            border-radius: 10px;
+            margin: 20px auto;
+        }
+ 
+         input{
+             /* margin: 20px auto; */
+             margin-top: 10px;
+             margin-bottom: 10px;
+         }
+ 
+         .divider{
+             border: none;
+             height: 2px;
+             background-color: black;
+             width: 100%;
+             margin: 10px 0 20px 0;
+         }
+     </style>
+ 
+     <hr class="divider">
+     
+     <!-- When there are no tasks present in the database -->
+     {% if tasks | length < 1%}
+     <h3>Sadly, you have not put anything in the table.</h3>
+     <!-- When there are tasks in the database -->
+     {% else %}
+     <table>
+        <tr>
+            <!-- The following are header columns-->
+            <th>Rep Num</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Street</th>
+            <th>City</th>
+            <th>State</th>
+            <th>PostalCode</th>
+            <th>Commission</th>
+            <th>Rate</th>
+
+            <th>Actions</th>
+        </tr>
+         <!-- Loop through all the values in MyTask table-->
+         {% for task in tasks%}
+         <!-- Populate each row of the table -->
+         <tr>
+             <!-- Display the task content-->
+             <th>
+                 {{task.repNum}}
+                 {{task.lastName}}
+                 {{task.firstName}}
+                 {{task.street}}
+                 {{task.city}}
+                 {{task.state}}
+                 {{task.postalCode}}
+                 {{task.commission}}
+                 {{task.rate}}
+             
+             <!-- Display the task creation date-->
+        
+             <!-- Create buttons to delete, update, or -->
+             <th>
+                 <!-- Button that routes to the delete for a specific ID -->
+                 <a href="/delete/{{task.id}}"> Delete </a>
+                 <br/>
+                 <!-- Button that routes to the update for a specific ID -->
+                 <a href="/update/{{task.id}}"> Update </a>
+             </th>
+         </tr>
+         {% endfor %}
+     </table>
+     {% endif %}
+     
+     <h3 class="divider"></h3>
+ 
+     <!-- Place to take in input from the user from the home page  (Action says where the data should be sent when submitted, method states how.)-->
+     <form action="#" method="post">
+        <p>First Name:</p>
+        <p><input type = "text" name = "f_Name"/></p>
+        <p>Last Name:</p>
+        <p><input type = "text" name = "lastName"/></p>
+        <p>Street:</p>
+        <p><input type = "text" name = "street"/></p>
+        <p>City:</p>
+        <p><input tpe = "text" name = "city"/></p>
+        <p>State:</p>
+        <p><input tpe = "text" name = "state"/></p>
+        <p>PostalCode:</p>
+        <p><input tpe = "text" name = "postalCode"/></p>
+        <p>Commission:</p>
+        <p><input tpe = "text" name = "commission"/></p>
+        <p>Rate:</p>
+        <p><input tpe = "text" name = "rate"/></p>
+
+        <input type = "submit" value = "Add Data" id = "btn_add">
+     </form>
+ </div>
+ {%endblock%}
