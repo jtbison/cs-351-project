@@ -46,37 +46,37 @@ class rep(db.Model):
 
 class customer(db.Model):
     __tablename__ = 'Customer'
-    column1 = Column('CustomerNum', CHAR(3), primary_key=True)
-    column2 = Column('CustomerName', CHAR(35), nullable=False)
-    column3 = Column('Street', CHAR(20))
-    column4 = Column('City', CHAR(15))
-    column5 = Column('State', CHAR(2))
-    column6 = Column('PostalCode', CHAR(5))
-    column7 = Column('Balance', DECIMAL(8, 2))
-    column8 = Column('CreditLimit', DECIMAL(8, 2))
-    column9 = Column('RepNum', CHAR(2))
+    column1 = db.Column('CustomerNum', CHAR(3), primary_key=True)
+    column2 = db.Column('CustomerName', CHAR(35), nullable=False)
+    column3 = db.Column('Street', CHAR(20))
+    column4 = db.Column('City', CHAR(15))
+    column5 = db.Column('State', CHAR(2))
+    column6 = db.Column('PostalCode', CHAR(5))
+    column7 = db.Column('Balance', DECIMAL(8, 2))
+    column8 = db.Column('CreditLimit', DECIMAL(8, 2))
+    column9 = db.Column('RepNum', CHAR(2))
 
 class orders(db.Model):
     __tablename__ = 'Orders'
-    column1 = Column('OrderNum', CHAR(3), primary_key=True)
-    column2 = Column('OrderDate', DATE)
-    column3 = Column('CustomerNum', CHAR(3))
+    column1 = db.Column('OrderNum', CHAR(3), primary_key=True)
+    column2 = db.Column('OrderDate', DATE)
+    column3 = db.Column('CustomerNum', CHAR(3))
 
 class orderLine(db.Model):
     __tablename__ = 'OrderLine'
-    column1 = Column('OrderNum', CHAR(5), primary_key=True)
-    column2 = Column('ItemNum', CHAR(4), primary_key=True)
-    column3 = Column('NumOrdered', DECIMAL(6, 2))
-    column4 = Column('QuotedPrice', DECIMAL(6, 2))
+    column1 = db.Column('OrderNum', CHAR(5), primary_key=True)
+    column2 = db.Column('ItemNum', CHAR(4), primary_key=True)
+    column3 = db.Column('NumOrdered', DECIMAL(6, 2))
+    column4 = db.Column('QuotedPrice', DECIMAL(6, 2))
 
 class item(db.Model):
     __tablename__ = 'Item'
-    column1 = Column('ItemNum', CHAR(4), primary_key=True)
-    column2 = Column('Description', CHAR(30))
-    column3 = Column('OnHand', DECIMAL(4, 0))
-    column4 = Column('Category', CHAR(3))
-    column5 = Column('Storehouse', CHAR(1))
-    column6 = Column('Price', DECIMAL(6, 2))
+    column1 = db.Column('ItemNum', CHAR(4), primary_key=True)
+    column2 = db.Column('Description', CHAR(30))
+    column3 = db.Column('OnHand', DECIMAL(4, 0))
+    column4 = db.Column('Category', CHAR(3))
+    column5 = db.Column('Storehouse', CHAR(1))
+    column6 = db.Column('Price', DECIMAL(6, 2))
 
 #Creating a table in SQLAlchemy API
 class MyTask(db.Model):
@@ -88,6 +88,14 @@ class MyTask(db.Model):
     def __repr__(self) -> str:
         return f"Task {self.id}"
 
+@app.route("/rep", methods = ["POST", "GET"])
+def repPage():
+    return render_template("reps", values=rep.query.all())
+
+@app.route("/user", methods = ["POST", "GET"])
+def customerPage():
+    return render_template("customers", values=customer.query.all())
+
 #Create the homepage of the webstie
 @app.route("/", methods = ["POST","GET"])
 def index():
@@ -97,7 +105,6 @@ def index():
         current_task = request.form["content"]
         # Create a new task object from the user input defined in current_task
         newTask = MyTask(content = current_task)
-        newRep = rep()
         #Attempt to connect to the database
         try:
             #connect to the database instance.
