@@ -85,16 +85,15 @@
                  {{task.postalCode}}
                  {{task.commission}}
                  {{task.rate}}
-             
-             <!-- Display the task creation date-->
+             </th>
         
              <!-- Create buttons to delete, update, or -->
              <th>
                  <!-- Button that routes to the delete for a specific ID -->
-                 <a href="/delete/{{task.id}}"> Delete </a>
+                 <a href="/delete/{{task.repNum}}"> Delete </a>
                  <br/>
                  <!-- Button that routes to the update for a specific ID -->
-                 <a href="/update/{{task.id}}"> Update </a>
+                 <a href="/update/{{task.repNum}}"> Update </a>
              </th>
          </tr>
          {% endfor %}
