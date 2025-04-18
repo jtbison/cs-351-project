@@ -3,7 +3,7 @@ from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE, create_engine, insert
+from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE, create_engine, insert, ForeignKey
 
 #Creating a flask instance
 app = Flask(__name__)
@@ -38,7 +38,7 @@ class customer(db.Model):
     postalCode = db.Column('PostalCode', CHAR(5))
     balance = db.Column('Balance', DECIMAL(8, 2))
     creditLimit = db.Column('CreditLimit', DECIMAL(8, 2))
-    repNum = db.Column('RepNum', CHAR(2))
+    repNum = db.Column('RepNum', CHAR(2), ForeignKey(rep.repNum))
 
 class orders(db.Model):
     __tablename__ = 'Orders'
@@ -136,7 +136,7 @@ def index():
 @app.route("/delete/<int:id>")
 def delete(id: int):
     #Get the task that needs to be deleted based on the id provided.
-    delete_Task = MyTask().query.get_or_404(id)
+    delete_Task = MyTask.query.get_or_404(id)
     try:
         #connect to the session and delete the task by id
         db.session.delete(delete_Task)
@@ -148,7 +148,7 @@ def delete(id: int):
         #Print out an error
         print(f"ERROR:{e}")
         #Return an error as well, beause this function must return something.
-        return f"ERROR:{e}" 
+        return f"ERROR:{e}"
 
 #Page/fucntion to update an item from the list.
 @app.route("/update/<int:id>", methods = ["GET","POST"])
@@ -186,8 +186,10 @@ if __name__ in "__main__" :
     with app.app_context():
         db.create_all()
 
-        stmt = insert(rep).values(repNum='99', lastName='Campos', firstName='Rafael', street="724 Vinca Dr.", city='Grove', state='CA', postalCode='90092', commission=23457.50, rate=0.06)
-        db.session.execute(stmt)
+        stmt1 = insert(rep).values(repNum='99', lastName='Campos', firstName='Rafael', street="724 Vinca Dr.", city='Grove', state='CA', postalCode='90092', commission=23457.50, rate=0.06)
+        stmt2 = insert(rep).values(repNum='30', lastName='Gradey', firstName='Megan', street='632 Liatris St.', city='Fullton', state='CA', postalCode='90085', commission=41317.00, rate=0.08)
+        db.session.execute(stmt1)
+        db.session.execute(stmt2)
         
     #Actually begins the program
     app.run(debug=True)
