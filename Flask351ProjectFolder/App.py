@@ -166,3 +166,4 @@ if __name__ in "__main__" :
         db.create_all()
     #Actually begins the program
     app.run(debug=True)
+
