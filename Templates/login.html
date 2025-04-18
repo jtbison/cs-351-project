@@ -23,19 +23,8 @@
             border-radius: 10px;
         }
 
-        table{
-            margin-left: 20px;
-            margin-right: 20px;
-            border-style: solid;
-            border-spacing: 10px;
-            border-radius: 10px;
-            margin: 20px auto;
-        }
-
         input{
-            /* margin: 20px auto; */
-            margin-top: 10px;
-            margin-bottom: 10px;
+            margin: 10px auto;
         }
 
         .divider{
@@ -43,19 +32,36 @@
             height: 2px;
             background-color: black;
             width: 100%;
-            margin: 10px 0 20px 0;
+            margin: 10px 0 10px 0;
+        }
+
+        .wrap{
+            margin: 10px auto;
         }
     </style>
 
     <hr class="divider">
 
     <!-- Place to take in input from the user from the home page  (Action says where the data should be sent when submitted, method states how.)-->
-    <form action="/" method="POST">
-        <input type = "text" name = "password" id = "log" />
-    </form>
-    <form action="/" method="POST">
-        <input type = "text" name = "password" id = "pass" />
-        <input type = "submit" value = "Add Data" id = "btn_add" />
+
+    <form action="">
+        <label for="first">
+            Username:
+        </label>
+        <input type="text" id="first" name="first"
+            placeholder="Enter your username" required><br>
+        
+        <label for="password">
+            Password:
+        </label>
+        <input type="password" id="password" name="password"
+            placeholder="Enter your password" required><br>
+        
+        <div class="input">
+            <button type="submit">
+                Submit
+            </button>
+        </div>
     </form>
 </div>
 {%endblock%}
