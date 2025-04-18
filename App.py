@@ -164,6 +164,13 @@ def update(id:int):
             return f"ERROR:{e}"    
     else:
         return "HOME"
+    
+#Page/function for logging into the database
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    # if(request.method = "POST"):
+    #     return redirect("/")
+    return render_template("login.html")
 
 
 #start the app itself running
@@ -173,4 +180,3 @@ if __name__ in "__main__" :
         db.create_all()
     #Actually begins the program
     app.run(debug=True)
-
