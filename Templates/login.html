@@ -13,12 +13,7 @@
 {% block body %}
 
 <div class = "content">
-    <h1>CS 351 Project</h1>
-
-    <form action="/login" method="POST">
-        <input type = "submit" value = "Log in" id = "btn_add" />
-    </form>
-
+    <h1>CS 351 Log In</h1>
     <style>
         .content{
             text-align: center;
@@ -53,50 +48,13 @@
     </style>
 
     <hr class="divider">
-    
-    <!-- When there are no tasks present in the database -->
-    {% if tasks | length < 1%}
-    <h3>Sadly, you have not put anything in the table.</h3>
-    <!-- When there are tasks in the database -->
-    {% else %}
-    <table>
-        <!-- This is the header row-->
-        <tr>
-            <!-- The following are header columns-->
-            <th>Info</th>
-            <th>Date Added</th>
-            <th>Actions</th>
-        </tr>
-        <!-- Loop through all the values in MyTask table-->
-        {% for task in tasks%}
-        <!-- Populate each row of the table -->
-        <tr>
-            <!-- Display the task content-->
-            <th>
-                {{task.content}}
-            </th>
-            <!-- Display the task creation date-->
-            <th>
-                {{task.created.strftime("%Y-%m-%d")}}
-            </th>
-            <!-- Create buttons to delete, update, or -->
-            <th>
-                <!-- Button that routes to the delete for a specific ID -->
-                <a href="/delete/{{task.id}}"> Delete </a>
-                <br/>
-                <!-- Button that routes to the update for a specific ID -->
-                <a href="/update/{{task.id}}"> Update </a>
-            </th>
-        </tr>
-        {% endfor %}
-    </table>
-    {% endif %}
-    
-    <h3 class="divider"></h3>
 
     <!-- Place to take in input from the user from the home page  (Action says where the data should be sent when submitted, method states how.)-->
     <form action="/" method="POST">
-        <input type = "text" name = "content" id = "content" />
+        <input type = "text" name = "password" id = "log" />
+    </form>
+    <form action="/" method="POST">
+        <input type = "text" name = "password" id = "pass" />
         <input type = "submit" value = "Add Data" id = "btn_add" />
     </form>
 </div>
