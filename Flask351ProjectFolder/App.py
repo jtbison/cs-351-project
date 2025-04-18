@@ -136,7 +136,7 @@ class orderLine(Base):
     column4 = Column('QuotedPrice', DECIMAL(6, 2))
 
     __table_args__ = (
-        PrimaryKeyConstraint('column1', 'column2')
+        PrimaryKeyConstraint('OrderNum', 'ItemNum'),
     )
 
 class item(Base):
@@ -159,6 +159,7 @@ def insert_rep(repNum: CHAR,
                postalCode: CHAR,
                commission: DECIMAL,
                rate: DECIMAL) -> None:
+    ...
     
 
 
