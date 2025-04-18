@@ -59,7 +59,7 @@ def index():
 
 #Page/fucntion to delete an item from the list.
 @app.route("/delete/<int:id>")
-def delete(id:int):
+def delete(id: int):
     #Get the task that needs to be deleted based on the id provided.
     delete_Task = MyTask().query.get_or_404(id)
     try:
