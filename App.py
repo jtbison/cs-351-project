@@ -172,7 +172,6 @@ def update(id:int):
     else:
         return "HOME"
 
-
 #Page/function for logging into the database
 @app.route("/login", methods=["GET", "POST"])
 def login():
