@@ -4,7 +4,7 @@ from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE, create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.schema import PrimaryKeyConstraint
 
 
@@ -12,7 +12,10 @@ from sqlalchemy.schema import PrimaryKeyConstraint
 app = Flask(__name__)
 Scss(app)
 
-#Initalize an instance of a database named "databse"
+class Base(DeclarativeBase):
+    pass
+
+#Initalize an instance of a database named "database"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 db = SQLAlchemy(app)
 
@@ -128,14 +131,10 @@ class orders(Base):
 
 class orderLine(Base):
     __tablename__ = 'OrderLine'
-    column1 = Column('OrderNum', CHAR(5))
-    column2 = Column('ItemNum', CHAR(4))
+    column1 = Column('OrderNum', CHAR(5), primary_key=True)
+    column2 = Column('ItemNum', CHAR(4), primary_key=True)
     column3 = Column('NumOrdered', DECIMAL(6, 2))
     column4 = Column('QuotedPrice', DECIMAL(6, 2))
-
-    __table_args__ = (
-        PrimaryKeyConstraint('column1', 'column2')
-    )
 
 class item(Base):
     __tablename__ = 'Item'
