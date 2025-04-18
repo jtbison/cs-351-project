@@ -3,12 +3,10 @@ from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE
+from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import PrimaryKeyConstraint
 
-
-Base = declarative_base()
 
 #Creating a flask instance
 app = Flask(__name__)
@@ -159,7 +157,7 @@ def insert_rep(repNum: CHAR,
                postalCode: CHAR,
                commission: DECIMAL,
                rate: DECIMAL) -> None:
-    
+    x = 'do something here'
 
 
 #start the app itself running
