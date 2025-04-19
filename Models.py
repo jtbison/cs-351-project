@@ -34,7 +34,7 @@ class customer(db.Model):
     postalCode = db.Column('PostalCode', CHAR(5))
     balance = db.Column('Balance', DECIMAL(8, 2))
     creditLimit = db.Column('CreditLimit', DECIMAL(8, 2))
-    repNum = db.relationship('RepNum', CHAR(2), db.ForeignKey("rep.repNum"))
+    repNum = db.relationship('RepNum', db.ForeignKey("rep.repNum"))
 
     orders = db.relationship("orders", backref="customer")
 
