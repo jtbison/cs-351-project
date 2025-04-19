@@ -3,21 +3,64 @@ from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE, create_engine
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.schema import PrimaryKeyConstraint
-
+from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE, create_engine, insert, ForeignKey
 
 #Creating a flask instance
 app = Flask(__name__)
 Scss(app)
 
-class Base(DeclarativeBase):
-    pass
-
 #Initalize an instance of a database named "database"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 db = SQLAlchemy(app)
+
+class rep(db.Model):
+    __tablename__ = 'Rep'
+    repNum = db.Column('RepNum', CHAR(2), primary_key=True)
+    lastName = db.Column('LastName', CHAR(15))
+    firstName = db.Column('FirstName', CHAR(15))
+    street = db.Column('Street', CHAR(15))
+    city = db.Column('City', CHAR(15))
+    state = db.Column('State', CHAR(2))
+    postalCode = db.Column('PostalCode', CHAR(5))
+    commission = db.Column('Commision', DECIMAL(7, 2))
+    rate = db.Column('Rate', DECIMAL(3, 2))
+    
+    def __repr__(self) -> str:
+        return f"Task {self.repNum}"
+
+class customer(db.Model):
+    __tablename__ = 'Customer'
+    customerNum = db.Column('CustomerNum', CHAR(3), primary_key=True)
+    customerName = db.Column('CustomerName', CHAR(35), nullable=False)
+    street = db.Column('Street', CHAR(20))
+    city = db.Column('City', CHAR(15))
+    state = db.Column('State', CHAR(2))
+    postalCode = db.Column('PostalCode', CHAR(5))
+    balance = db.Column('Balance', DECIMAL(8, 2))
+    creditLimit = db.Column('CreditLimit', DECIMAL(8, 2))
+    repNum = db.Column('RepNum', CHAR(2), ForeignKey(rep.repNum))
+
+class orders(db.Model):
+    __tablename__ = 'Orders'
+    orderNum = db.Column('OrderNum', CHAR(3), primary_key=True)
+    orderDate = db.Column('OrderDate', DATE)
+    customerNum = db.Column('CustomerNum', CHAR(3))
+
+class orderLine(db.Model):
+    __tablename__ = 'OrderLine'
+    orderNum = db.Column('OrderNum', CHAR(5), primary_key=True)
+    itemNum = db.Column('ItemNum', CHAR(4), primary_key=True)
+    numOrdered = db.Column('NumOrdered', DECIMAL(6, 2))
+    quotedPrice = db.Column('QuotedPrice', DECIMAL(6, 2))
+
+class item(db.Model):
+    __tablename__ = 'Item'
+    itemNum = db.Column('ItemNum', CHAR(4), primary_key=True)
+    description = db.Column('Description', CHAR(30))
+    onHand = db.Column('OnHand', DECIMAL(4, 0))
+    category = db.Column('Category', CHAR(3))
+    storehouse = db.Column('Storehouse', CHAR(1))
+    price = db.Column('Price', DECIMAL(6, 2))
 
 #Creating a table in SQLAlchemy API
 class MyTask(db.Model):
@@ -28,6 +71,37 @@ class MyTask(db.Model):
 
     def __repr__(self) -> str:
         return f"Task {self.id}"
+
+@app.route("/repView", methods=["POST", "GET"])
+def repPage():
+#Function to add a task
+    if request.method == "POST":
+        #.form is refrencing the inputs in index.hml, under the form action.
+        newRep = request.form["lastName"]
+        # Create a new task object from the user input defined in current_task
+        newTask = rep(lastName = newRep)
+        #Attempt to connect to the database
+        try:
+            #connect to the database instance.
+            db.session.add(newTask)
+            #commit changes to the database,
+            db.session.commit()
+            #Once the changes are made to the database, redirect the user to the updated homepage.
+            return redirect("/repView")
+        except Exception as e:
+            #Print out an error
+            print(f"ERROR:{e}")
+            #Return an error as well, beause this function must return something.
+            return f"ERROR:{e}"
+    #Function to see all current tasks (it is an else becuase we always want the website to render with all database tasks shown.)
+    else:
+        tasks = rep.query.order_by(rep.repNum).all()
+        #Render the website  IMPORTANT!!! in "tasks = tasks" the left tasks refers to "tasks" in idex.html, right tasks refers to "tasks" as defined above.
+        return render_template("rep.html", tasks = tasks)
+
+@app.route("/customerView", methods = ["POST", "GET"])
+def customerPage():
+    return render_template("customers", values=customer.query.all())
 
 #Create the homepage of the webstie
 @app.route("/", methods = ["POST","GET"])
@@ -62,7 +136,7 @@ def index():
 @app.route("/delete/<int:id>")
 def delete(id: int):
     #Get the task that needs to be deleted based on the id provided.
-    delete_Task = MyTask().query.get_or_404(id)
+    delete_Task = MyTask.query.get_or_404(id)
     try:
         #connect to the session and delete the task by id
         db.session.delete(delete_Task)
@@ -74,7 +148,7 @@ def delete(id: int):
         #Print out an error
         print(f"ERROR:{e}")
         #Return an error as well, beause this function must return something.
-        return f"ERROR:{e}" 
+        return f"ERROR:{e}"
 
 #Page/fucntion to update an item from the list.
 @app.route("/update/<int:id>", methods = ["GET","POST"])
@@ -97,7 +171,7 @@ def update(id:int):
             return f"ERROR:{e}"    
     else:
         return "HOME"
-    
+
 #Page/function for logging into the database
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -105,71 +179,18 @@ def login():
     #     return redirect("/")
     return render_template("login.html")
 
-
-class rep(Base):
-    __tablename__ = 'Rep'
-    column1 = Column('RepNum', CHAR(2), primary_key=True)
-    column2 = Column('LastName', CHAR(15))
-    column3 = Column('FirstName', CHAR(15))
-    column4 = Column('Street', CHAR(15))
-    column5 = Column('City', CHAR(15))
-    column6 = Column('State', CHAR(2))
-    column7 = Column('PostalCode', CHAR(5))
-    column8 = Column('Commision', DECIMAL(7, 2))
-    column9 = Column('Rate', DECIMAL(3, 2))
-
-class customer(Base):
-    __tablename__ = 'Customer'
-    column1 = Column('CustomerNum', CHAR(3), primary_key=True)
-    column2 = Column('CustomerName', CHAR(35), nullable=False)
-    column3 = Column('Street', CHAR(20))
-    column4 = Column('City', CHAR(15))
-    column5 = Column('State', CHAR(2))
-    column6 = Column('PostalCode', CHAR(5))
-    column7 = Column('Balance', DECIMAL(8, 2))
-    column8 = Column('CreditLimit', DECIMAL(8, 2))
-    column9 = Column('RepNum', CHAR(2))
-
-class orders(Base):
-    __tablename__ = 'Orders'
-    column1 = Column('OrderNum', CHAR(3), primary_key=True)
-    column2 = Column('OrderDate', DATE)
-    column3 = Column('CustomerNum', CHAR(3))
-
-class orderLine(Base):
-    __tablename__ = 'OrderLine'
-    column1 = Column('OrderNum', CHAR(5), primary_key=True)
-    column2 = Column('ItemNum', CHAR(4), primary_key=True)
-    column3 = Column('NumOrdered', DECIMAL(6, 2))
-    column4 = Column('QuotedPrice', DECIMAL(6, 2))
-
-class item(Base):
-    __tablename__ = 'Item'
-    column1 = Column('ItemNum', CHAR(4), primary_key=True)
-    column2 = Column('Description', CHAR(30))
-    column3 = Column('OnHand', DECIMAL(4, 0))
-    column4 = Column('Category', CHAR(3))
-    column5 = Column('Storehouse', CHAR(1))
-    column6 = Column('Price', DECIMAL(6, 2))
-
-newRep = rep()
-
-def insert_rep(repNum: CHAR, 
-               lastName: CHAR, 
-               firstName: CHAR,
-               street: CHAR,
-               city: CHAR,
-               state: CHAR,
-               postalCode: CHAR,
-               commission: DECIMAL,
-               rate: DECIMAL) -> None:
-    x = 'do something here'
-
-
 #start the app itself running
 if __name__ in "__main__" :
     #Begins the databse instance
     with app.app_context():
         db.create_all()
+
+        stmt1 = insert(rep).values(repNum='99', lastName='Campos', firstName='Rafael', street="724 Vinca Dr.", city='Grove', state='CA', postalCode='90092', commission=23457.50, rate=0.06)
+        stmt2 = insert(rep).values(repNum='30', lastName='Gradey', firstName='Megan', street='632 Liatris St.', city='Fullton', state='CA', postalCode='90085', commission=41317.00, rate=0.08)
+        db.session.execute(stmt1)
+        db.session.execute(stmt2)
+        
     #Actually begins the program
     app.run(debug=True)
+    db.session.commit()
+    
