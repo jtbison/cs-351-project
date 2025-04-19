@@ -90,10 +90,10 @@
              <!-- Create buttons to delete, update, or -->
              <th>
                  <!-- Button that routes to the delete for a specific ID -->
-                 <a href="/delete/{{task.repNum}}"> Delete </a>
+                 <a href="/deleteRep/{{task.repNum}}"> Delete </a>
                  <br/>
                  <!-- Button that routes to the update for a specific ID -->
-                 <a href="/update/{{task.repNum}}"> Update </a>
+                 <a href="/updateRep/{{task.repNum}}"> Update </a>
              </th>
          </tr>
          {% endfor %}
@@ -104,6 +104,8 @@
  
      <!-- Place to take in input from the user from the home page  (Action says where the data should be sent when submitted, method states how.)-->
      <form action="#" method="post">
+        <p>Rep Number:</p>
+        <p><input type = "text" name = "repNum"></p>
         <p>First Name:</p>
         <p><input type = "text" name = "f_Name"/></p>
         <p>Last Name:</p>

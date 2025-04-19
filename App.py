@@ -79,7 +79,11 @@ def repPage():
         #.form is refrencing the inputs in index.hml, under the form action.
         newRep = request.form["lastName"]
         # Create a new task object from the user input defined in current_task
+
+        # ADDING BY FILLING IN FIELDS DOES NOT WORK YET
         newTask = rep(lastName = newRep)
+
+        
         #Attempt to connect to the database
         try:
             #connect to the database instance.
@@ -131,6 +135,23 @@ def index():
         tasks = MyTask.query.order_by(MyTask.created).all()
         #Render the website  IMPORTANT!!! in "tasks = tasks" the left tasks refers to "tasks" in idex.html, right tasks refers to "tasks" as defined above.
         return render_template("index.html", tasks = tasks)
+
+@app.route("/deleteRep/<int:repNum>")
+def deleteRep(repNum: int):
+    #Get the task that needs to be deleted based on the id provided.
+    
+    try:
+        rep.query.filter(rep.repNum == repNum).delete()
+        #connect to the session and delete the task by id
+        #commit changes to the database
+        db.session.commit()
+        #Once changes are made, update the homepage of the website
+        return redirect("/")
+    except Exception as e:
+        #Print out an error
+        print(f"ERROR:{e}")
+        #Return an error as well, beause this function must return something.
+        return f"ERROR:{e}"
 
 #Page/fucntion to delete an item from the list.
 @app.route("/delete/<int:id>")
