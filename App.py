@@ -77,11 +77,11 @@ def repPage():
 #Function to add a task
     if request.method == "POST":
         #.form is refrencing the inputs in index.hml, under the form action.
-        newRep = request.form.items
+        
         # Create a new task object from the user input defined in current_task
 
         # RN ALL FIELDS MUST BE FILLED OUT TO WORK
-        newTask = rep(repNum = request.form["repNum"],
+        newRepTask = rep(repNum = request.form["repNum"],
                       lastName = request.form["l_Name"],
                       firstName = request.form["f_Name"],
                       street = request.form["street"],
@@ -95,7 +95,7 @@ def repPage():
         #Attempt to connect to the database
         try:
             #connect to the database instance.
-            db.session.add(newTask)
+            db.session.add(newRepTask)
             #commit changes to the database,
             db.session.commit()
             #Once the changes are made to the database, redirect the user to the updated homepage.
