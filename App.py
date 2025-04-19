@@ -3,7 +3,9 @@ from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE, create_engine, insert, ForeignKey
+from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE, create_engine, insert, ForeignKey, select
+from sqlalchemy.orm import Mapped, MappedColumn, relationship
+from Models import customer, rep, orderLine, orders, item
 
 #Creating a flask instance
 app = Flask(__name__)
@@ -12,55 +14,6 @@ Scss(app)
 #Initalize an instance of a database named "database"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 db = SQLAlchemy(app)
-
-class rep(db.Model):
-    __tablename__ = 'Rep'
-    repNum = db.Column('RepNum', CHAR(2), primary_key=True)
-    lastName = db.Column('LastName', CHAR(15))
-    firstName = db.Column('FirstName', CHAR(15))
-    street = db.Column('Street', CHAR(15))
-    city = db.Column('City', CHAR(15))
-    state = db.Column('State', CHAR(2))
-    postalCode = db.Column('PostalCode', CHAR(5))
-    commission = db.Column('Commision', DECIMAL(7, 2))
-    rate = db.Column('Rate', DECIMAL(3, 2))
-    
-    def __repr__(self) -> str:
-        return f"Task {self.repNum}"
-
-class customer(db.Model):
-    __tablename__ = 'Customer'
-    customerNum = db.Column('CustomerNum', CHAR(3), primary_key=True)
-    customerName = db.Column('CustomerName', CHAR(35), nullable=False)
-    street = db.Column('Street', CHAR(20))
-    city = db.Column('City', CHAR(15))
-    state = db.Column('State', CHAR(2))
-    postalCode = db.Column('PostalCode', CHAR(5))
-    balance = db.Column('Balance', DECIMAL(8, 2))
-    creditLimit = db.Column('CreditLimit', DECIMAL(8, 2))
-    repNum = db.Column('RepNum', CHAR(2), ForeignKey(rep.repNum))
-
-class orders(db.Model):
-    __tablename__ = 'Orders'
-    orderNum = db.Column('OrderNum', CHAR(3), primary_key=True)
-    orderDate = db.Column('OrderDate', DATE)
-    customerNum = db.Column('CustomerNum', CHAR(3))
-
-class orderLine(db.Model):
-    __tablename__ = 'OrderLine'
-    orderNum = db.Column('OrderNum', CHAR(5), primary_key=True)
-    itemNum = db.Column('ItemNum', CHAR(4), primary_key=True)
-    numOrdered = db.Column('NumOrdered', DECIMAL(6, 2))
-    quotedPrice = db.Column('QuotedPrice', DECIMAL(6, 2))
-
-class item(db.Model):
-    __tablename__ = 'Item'
-    itemNum = db.Column('ItemNum', CHAR(4), primary_key=True)
-    description = db.Column('Description', CHAR(30))
-    onHand = db.Column('OnHand', DECIMAL(4, 0))
-    category = db.Column('Category', CHAR(3))
-    storehouse = db.Column('Storehouse', CHAR(1))
-    price = db.Column('Price', DECIMAL(6, 2))
 
 #Creating a table in SQLAlchemy API
 class MyTask(db.Model):
@@ -77,7 +30,7 @@ def repPage():
 #Function to add a task
     if request.method == "POST":
         #.form is refrencing the inputs in index.hml, under the form action.
-        
+
         # Create a new task object from the user input defined in current_task
 
         # RN ALL FIELDS MUST BE FILLED OUT TO WORK
@@ -143,6 +96,20 @@ def index():
         tasks = MyTask.query.order_by(MyTask.created).all()
         #Render the website  IMPORTANT!!! in "tasks = tasks" the left tasks refers to "tasks" in idex.html, right tasks refers to "tasks" as defined above.
         return render_template("index.html", tasks = tasks)
+
+def updateCreditLimit(name, newCreditLimit):
+    cust = customer.query.get(name)
+    cust.creditLimit = newCreditLimit
+    db.session.commit()
+
+@app.route("/report")
+def generateReport():
+    firstNames = select(rep.firstName)
+    lastNames = select(rep.lastName)
+
+    fullNames = []
+  
+    return render_template("report.html", repNames = fullNames)
 
 @app.route("/deleteRep/<repNum>")
 def deleteRep(repNum):
