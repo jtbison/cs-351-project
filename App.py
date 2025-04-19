@@ -77,13 +77,21 @@ def repPage():
 #Function to add a task
     if request.method == "POST":
         #.form is refrencing the inputs in index.hml, under the form action.
-        newRep = request.form["lastName"]
+        newRep = request.form.items
         # Create a new task object from the user input defined in current_task
 
-        # ADDING BY FILLING IN FIELDS DOES NOT WORK YET
-        newTask = rep(lastName = newRep)
+        # RN ALL FIELDS MUST BE FILLED OUT TO WORK
+        newTask = rep(repNum = request.form["repNum"],
+                      lastName = request.form["l_Name"],
+                      firstName = request.form["f_Name"],
+                      street = request.form["street"],
+                      city = request.form["city"],
+                      state = request.form["state"],
+                      postalCode = request.form["postalCode"],
+                      commission = request.form["commission"],
+                      rate = request.form["rate"])
 
-        
+
         #Attempt to connect to the database
         try:
             #connect to the database instance.
@@ -136,8 +144,8 @@ def index():
         #Render the website  IMPORTANT!!! in "tasks = tasks" the left tasks refers to "tasks" in idex.html, right tasks refers to "tasks" as defined above.
         return render_template("index.html", tasks = tasks)
 
-@app.route("/deleteRep/<int:repNum>")
-def deleteRep(repNum: int):
+@app.route("/deleteRep/<repNum>")
+def deleteRep(repNum):
     #Get the task that needs to be deleted based on the id provided.
     
     try:
@@ -146,7 +154,7 @@ def deleteRep(repNum: int):
         #commit changes to the database
         db.session.commit()
         #Once changes are made, update the homepage of the website
-        return redirect("/")
+        return redirect("/repView")
     except Exception as e:
         #Print out an error
         print(f"ERROR:{e}")
@@ -202,16 +210,20 @@ def login():
 
 #start the app itself running
 if __name__ in "__main__" :
+   
+
     #Begins the databse instance
     with app.app_context():
         db.create_all()
-
-        stmt1 = insert(rep).values(repNum='99', lastName='Campos', firstName='Rafael', street="724 Vinca Dr.", city='Grove', state='CA', postalCode='90092', commission=23457.50, rate=0.06)
-        stmt2 = insert(rep).values(repNum='30', lastName='Gradey', firstName='Megan', street='632 Liatris St.', city='Fullton', state='CA', postalCode='90085', commission=41317.00, rate=0.08)
-        db.session.execute(stmt1)
-        db.session.execute(stmt2)
+        
+        # inserts for testing
+        #stmt1 = insert(rep).values(repNum='99', lastName='Campos', firstName='Rafael', street="724 Vinca Dr.", city='Grove', state='CA', postalCode='90092', commission=23457.50, rate=0.06)
+        #stmt2 = insert(rep).values(repNum='30', lastName='Gradey', firstName='Megan', street='632 Liatris St.', city='Fullton', state='CA', postalCode='90085', commission=41317.00, rate=0.08)
+        #db.session.execute(stmt1)
+        #db.session.execute(stmt2) 
+        #db.session.commit()  
         
     #Actually begins the program
     app.run(debug=True)
-    db.session.commit()
+   
     
