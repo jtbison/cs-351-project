@@ -78,9 +78,6 @@ class MyTask(db.Model):
 def repPage():
 #Function to add a task
     if request.method == "POST":
-        #.form is refrencing the inputs in index.hml, under the form action.
-
-        # Create a new task object from the user input defined in current_task
 
         # RN ALL FIELDS MUST BE FILLED OUT TO WORK
         newRepTask = rep(repNum = request.form["repNum"],
@@ -92,7 +89,6 @@ def repPage():
                       postalCode = request.form["postalCode"],
                       commission = request.form["commission"],
                       rate = request.form["rate"])
-
 
         #Attempt to connect to the database
         try:
@@ -113,45 +109,33 @@ def repPage():
         #Render the website  IMPORTANT!!! in "tasks = tasks" the left tasks refers to "tasks" in idex.html, right tasks refers to "tasks" as defined above.
         return render_template("rep.html", tasks = tasks)
 
-@app.route("/customerView", methods = ["POST", "GET"])
-def customerPage():
-    return render_template("customers", values=customer.query.all())
-
 #Create the homepage of the webstie
-@app.route("/", methods = ["POST","GET"])
+@app.route("/")
 def index():
-    #Function to add a task
-    if request.method == "POST":
-        #.form is refrencing the inputs in index.hml, under the form action.
-        current_task = request.form["text_content"]
-        # Create a new task object from the user input defined in current_task
-        #Attempt to connect to the database
-        try:
-            return redirect("/customerReport/" + current_task)
-        except Exception as e:
-            #Print out an error
-            print(f"ERROR:{e}")
-            #Return an error as well, beause this function must return something.
-            return f"ERROR:{e}"
-    #Function to see all current tasks (it is an else becuase we always want the website to render with all database tasks shown.)
-    else:
-        return render_template("index.html")
+    return render_template("index.html")
 
 def updateCreditLimit(name, newCreditLimit):
     cust = customer.query.get(name)
     cust.creditLimit = newCreditLimit
     db.session.commit()
 
-@app.route("/customerReport/<name>")
-def customerReport(name):
-    stmt = select(customer.customerName, func.sum(orderLine.quotedPrice))\
+@app.route("/customerReport", methods=["GET", "POST"])
+def customerReport():
+    if request.method == "POST":
+        try:
+            name = request.form["custName"]
+        except:
+            name = "No Customer Entered"
+
+        stmt = select(customer.customerName, func.sum(orderLine.quotedPrice))\
                         .where(customer.customerName == name)\
                         .outerjoin(orders, orders.customerNum == customer.customerNum)\
                         .join(orderLine, orderLine.orderNum == orders.orderNum)
+        
+        info = db.session.execute(stmt).one()
+        return render_template("customerReport.html", customerInfo = info)
     
-    info = db.session.execute(stmt).one()
-  
-    return render_template("customerReport.html", customerInfo = info)
+    return render_template("customerReport.html", customerInfo = "No Customer Info")
 
 @app.route("/report/")
 def generateReport():

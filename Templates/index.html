@@ -27,11 +27,8 @@
         <input type = "submit" value = "View Report" id = "btn_report"/>
     </form>
 
-
-    <p>Enter Customer Name to View Info:</p>
-    <form action="/customerReport/{{name}}" method="POST">
-        <input type = "text" name = "text_content" id = "cust_content" />
-        <input type = "submit" value = "View Info" id = "btn_cust_report" />
+    <form action="/customerReport" method="post">
+        <input type = "submit" value = "View Customer Report" id = "btn_cust_report" />
     </form>
 
     <style>
@@ -81,7 +78,7 @@
             <th>Actions</th>
         </tr>
         <!-- Loop through all the values in MyTask table-->
-        {% for task in tasks%}
+        {% for task in tasks %}
         <!-- Populate each row of the table -->
         <tr>
             <!-- Display the task content-->
@@ -104,13 +101,5 @@
         {% endfor %}
     </table>
     {% endif %}
-    
-    <h3 class="divider"></h3>
-
-    <!-- Place to take in input from the user from the home page  (Action says where the data should be sent when submitted, method states how.)-->
-    <form action="/" method="POST">
-        <input type = "text" name = "content" id = "content" />
-        <input type = "submit" value = "Add Data" id = "btn_add" />
-    </form>
 </div>
 {%endblock%}
