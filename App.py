@@ -3,9 +3,8 @@ from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import func, Table, Column, CHAR, DECIMAL, DATE, create_engine, insert, ForeignKey, select
+from sqlalchemy import func, text, Table, Column, CHAR, DECIMAL, DATE, create_engine, insert, ForeignKey, select
 from sqlalchemy.orm import Mapped, MappedColumn, relationship
-from Models import customer, rep, orderLine, orders, item
 
 #Creating a flask instance
 app = Flask(__name__)
@@ -124,17 +123,11 @@ def index():
     #Function to add a task
     if request.method == "POST":
         #.form is refrencing the inputs in index.hml, under the form action.
-        current_task = request.form["content"]
+        current_task = request.form["text_content"]
         # Create a new task object from the user input defined in current_task
-        newTask = MyTask(content = current_task)
         #Attempt to connect to the database
         try:
-            #connect to the database instance.
-            db.session.add(newTask)
-            #commit changes to the database,
-            db.session.commit()
-            #Once the changes are made to the database, redirect the user to the updated homepage.
-            return redirect("/")
+            return redirect("/customerReport/" + current_task)
         except Exception as e:
             #Print out an error
             print(f"ERROR:{e}")
@@ -142,21 +135,32 @@ def index():
             return f"ERROR:{e}"
     #Function to see all current tasks (it is an else becuase we always want the website to render with all database tasks shown.)
     else:
-        #Sort the MyTask table by the data a task was created, save the value as tasks.
-        tasks = MyTask.query.order_by(MyTask.created).all()
-        #Render the website  IMPORTANT!!! in "tasks = tasks" the left tasks refers to "tasks" in idex.html, right tasks refers to "tasks" as defined above.
-        return render_template("index.html", tasks = tasks)
+        return render_template("index.html")
 
 def updateCreditLimit(name, newCreditLimit):
     cust = customer.query.get(name)
     cust.creditLimit = newCreditLimit
     db.session.commit()
 
+@app.route("/customerReport/<name>")
+def customerReport(name):
+    stmt = select(customer.customerName, func.sum(orderLine.quotedPrice))\
+                        .where(customer.customerName == name)\
+                        .outerjoin(orders, orders.customerNum == customer.customerNum)\
+                        .join(orderLine, orderLine.orderNum == orders.orderNum)
+    
+    info = db.session.execute(stmt).one()
+  
+    return render_template("customerReport.html", customerInfo = info)
+
 @app.route("/report/")
 def generateReport():
+    repInfo = select(rep.lastName, rep.firstName,\
+                      func.count(customer.customerNum),\
+                      func.sum(customer.balance) / func.count(customer.customerNum))\
+                        .group_by(rep.lastName, rep.firstName)\
+                        .outerjoin(customer, customer.repNum == rep.repNum)
     
-    #firstNames = select(rep.lastName, rep.firstName).select_from("rep").join("customer", rep.repNum == customer.repNum)
-    repInfo = select(rep.lastName, rep.firstName, func.count(), func.sum(rep.repNum) / (func.count() + 1)).group_by(rep.lastName, rep.firstName)
     info = db.session.execute(repInfo)
   
     return render_template("report.html", repNames = info)
@@ -228,38 +232,36 @@ def login():
 #start the app itself running
 if __name__ in "__main__" :
    
-
     #Begins the databse instance
     with app.app_context():
         db.create_all()
         
-        # inserts for testing
-        
-        #stmt1 = insert(rep).values(repNum='15', lastName='Campos', firstName='Rafael', street="724 Vinca Dr.", city='Grove', state='CA', postalCode='90092', commission=23457.50, rate=0.06)
-        #stmt2 = insert(rep).values(repNum='30', lastName='Gradey', firstName='Megan', street='632 Liatris St.', city='Fullton', state='CA', postalCode='90085', commission=41317.00, rate=0.08)
-        #stmt3 = insert(rep).values(repNum='45', lastName='Tian', firstName='Hui',street='1785 Tyler Ave.',city='Northfield',state='CA',postalCode='90098', commission=27789.25, rate=0.06)
-        #stmt4 = insert(rep).values(repNum='60',lastName='Sefton', firstName='Janet', street='267 Oakley St.', city='Congaree', state='CA', postalCode='90097', commission=0.00, rate=0.06)
-        #db.session.execute(stmt1)
-        #db.session.execute(stmt2) 
-        #db.session.execute(stmt3)
-        #db.session.execute(stmt4)
-        #db.session.commit()
+        sql_file = open('inserts.sql','r')
 
+    # Create an empty command string
+        sql_command = ''
 
+    # Iterate over all lines in the sql file
+        for line in sql_file:
+            # Ignore commented lines
+            if not line.startswith('--') and line.strip('\n'):
+                # Append line to the command string
+                sql_command += (" " + line.strip('\n'))
 
-        #VALUES  ('126','Toys Galore','28 Laketon St.','Fullton','CA','90085',1210.25,7500.00,'15');
+                # If the command string ends with ';', it is a full statement
+                if sql_command.endswith(';'):
+                    # Try to execute statement and commit it
+                    try:
+                        db.session.execute(text(sql_command))
+                        db.session.commit()
 
-        #VALUES ('260','Brookings Direct','452 Columbus Dr.','Grove','CA','90092',575.00,10000.00,'30');
+                    # Assert in case of error
+                    except:
+                        print('Ops')
 
-        #VALUES ('334','The Everything Shop','342 Magee St.','Congaree','CA','90097',2345.75,7500.00,'45');
-
-        #VALUES ('386','Johnson''s Department Store','124 Main St.','Northfield','CA','90098',879.25,7500.00,'30');
-
-        #VALUES ('440','Grove Historical Museum Store','3456 Central Ave.','Fullton','CA','90085',345.00,5000.00,'45');
-        
-
-        #stmt1 = insert(customer).values('126','Toys Galore','28 Laketon St.','Fullton','CA','90085',1210.25,7500.00,'15')
-
+                    # Finally, clear command string
+                    finally:
+                        sql_command = ''
 
     #Actually begins the program
     app.run(debug=True)

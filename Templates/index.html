@@ -27,6 +27,13 @@
         <input type = "submit" value = "View Report" id = "btn_report"/>
     </form>
 
+
+    <p>Enter Customer Name to View Info:</p>
+    <form action="/customerReport/{{name}}" method="POST">
+        <input type = "text" name = "text_content" id = "cust_content" />
+        <input type = "submit" value = "View Info" id = "btn_cust_report" />
+    </form>
+
     <style>
         .content{
             text-align: center;
