@@ -121,21 +121,31 @@ def updateCreditLimit(name, newCreditLimit):
 
 @app.route("/customerReport", methods=["GET", "POST"])
 def customerReport():
-    if request.method == "POST":
-        try:
-            name = request.form["custName"]
-        except:
-            name = "No Customer Entered"
+    customerInfo = None  # Default: don't show anything
 
-        stmt = select(customer.customerName, func.sum(orderLine.quotedPrice))\
-                        .where(customer.customerName == name)\
-                        .outerjoin(orders, orders.customerNum == customer.customerNum)\
-                        .join(orderLine, orderLine.orderNum == orders.orderNum)
-        
-        info = db.session.execute(stmt).one()
-        return render_template("customerReport.html", customerInfo = info)
-    
-    return render_template("customerReport.html", customerInfo = "No Customer Info")
+    if request.method == "POST":
+        name = request.form.get("custName", "").strip()
+
+        if not name:
+            customerInfo = "No customer name entered."
+        else:
+            stmt = select(
+                        customer.customerName, 
+                        func.sum(orderLine.quotedPrice))\
+                            .where(func.lower(customer.customerName) == name.lower())\
+                            .outerjoin(orders, orders.customerNum == customer.customerNum)\
+                            .outerjoin(orderLine, orderLine.orderNum == orders.orderNum)\
+                            .group_by(customer.customerName)
+
+            result = db.session.execute(stmt).one_or_none()
+
+            if result is None:
+                customerInfo = f"No data found for '{name}'."
+            else:
+                total = result[1] if result[1] is not None else 0
+                customerInfo = f"Customer Name: {result[0]}, Total Quoted Price: ${total:.2f}"
+
+    return render_template("customerReport.html", customerInfo=customerInfo)
 
 @app.route("/report/")
 def generateReport():

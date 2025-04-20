@@ -1,10 +1,14 @@
-{% extends "base.html"%}
 
-{customerInfo}
+{% block content %}
+  {% if customerInfo %}
+    <p>{{ customerInfo }}</p>
+  {% endif %}
 
+  <form action="#" method="post">
+      <p>Enter customer name to view info for:</p>
+      <p><input type="text" name="custName"></p>
+      <p><input type="submit" value="View Report" id="btn_add"></p>
+  </form>
+{% endblock %}
 
-<form action="#" method="post">
-    <p>Enter customer name to view info for:</p>
-    <p><input type = "text" name = "custName"></p>
-    <p><input type = "submit" value = "View Report" id = "btn_add"></p>
-</form>
+<a href="/" class="btn">Back to Home</a>
