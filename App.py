@@ -3,7 +3,7 @@ from flask import Flask, render_template, redirect, request
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import Table, Column, CHAR, DECIMAL, DATE, create_engine, insert, ForeignKey, select
+from sqlalchemy import func, Table, Column, CHAR, DECIMAL, DATE, create_engine, insert, ForeignKey, select
 from sqlalchemy.orm import Mapped, MappedColumn, relationship
 from Models import customer, rep, orderLine, orders, item
 
@@ -16,6 +16,56 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 db = SQLAlchemy(app)
 
 #Creating a table in SQLAlchemy API
+
+class rep(db.Model):
+    __tablename__ = 'Rep'
+    repNum = db.Column('RepNum', CHAR(2), primary_key=True)
+    lastName = db.Column('LastName', CHAR(15))
+    firstName = db.Column('FirstName', CHAR(15))
+    street = db.Column('Street', CHAR(15))
+    city = db.Column('City', CHAR(15))
+    state = db.Column('State', CHAR(2))
+    postalCode = db.Column('PostalCode', CHAR(5))
+    commission = db.Column('Commision', DECIMAL(7, 2))
+    rate = db.Column('Rate', DECIMAL(3, 2))
+    
+    def __repr__(self) -> str:
+        return self.firstName + self.lastName
+
+class customer(db.Model):
+    __tablename__ = 'Customer'
+    customerNum = db.Column('CustomerNum', CHAR(3), primary_key=True)
+    customerName = db.Column('CustomerName', CHAR(35), nullable=False)
+    street = db.Column('Street', CHAR(20))
+    city = db.Column('City', CHAR(15))
+    state = db.Column('State', CHAR(2))
+    postalCode = db.Column('PostalCode', CHAR(5))
+    balance = db.Column('Balance', DECIMAL(8, 2))
+    creditLimit = db.Column('CreditLimit', DECIMAL(8, 2))
+    repNum = db.Column('RepNum', ForeignKey("rep.repNum"))
+
+class orders(db.Model):
+    __tablename__ = 'Orders'
+    orderNum = db.Column('OrderNum', CHAR(3), primary_key=True)
+    orderDate = db.Column('OrderDate', DATE)
+    customerNum = db.Column("CustomerNum", ForeignKey("customer.customerNum"))
+
+class orderLine(db.Model):
+    __tablename__ = 'OrderLine'
+    orderNum = db.Column('OrderNum', CHAR(5), ForeignKey("orders.orderNum"), primary_key=True)
+    itemNum = db.Column('ItemNum', CHAR(4), ForeignKey("item.itemNum"), primary_key=True)
+    numOrdered = db.Column('NumOrdered', DECIMAL(6, 2))
+    quotedPrice = db.Column('QuotedPrice', DECIMAL(6, 2))
+
+class item(db.Model):
+    __tablename__ = 'Item'
+    itemNum = db.Column('ItemNum', CHAR(4), primary_key=True)
+    description = db.Column('Description', CHAR(30))
+    onHand = db.Column('OnHand', DECIMAL(4, 0))
+    category = db.Column('Category', CHAR(3))
+    storehouse = db.Column('Storehouse', CHAR(1))
+    price = db.Column('Price', DECIMAL(6, 2))
+
 class MyTask(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     content = db.Column(db.String(100), nullable = False)
@@ -102,14 +152,14 @@ def updateCreditLimit(name, newCreditLimit):
     cust.creditLimit = newCreditLimit
     db.session.commit()
 
-@app.route("/report")
+@app.route("/report/")
 def generateReport():
-    firstNames = select(rep.firstName)
-    lastNames = select(rep.lastName)
-
-    fullNames = []
+    
+    #firstNames = select(rep.lastName, rep.firstName).select_from("rep").join("customer", rep.repNum == customer.repNum)
+    firstNames = select(rep.lastName, rep.firstName, func.count(), func.sum(rep.repNum) / (func.count() + 1)).group_by(rep.lastName, rep.firstName)
+    names = db.session.execute(firstNames)
   
-    return render_template("report.html", repNames = fullNames)
+    return render_template("report.html", repNames = names)
 
 @app.route("/deleteRep/<repNum>")
 def deleteRep(repNum):
@@ -184,12 +234,33 @@ if __name__ in "__main__" :
         db.create_all()
         
         # inserts for testing
-        #stmt1 = insert(rep).values(repNum='99', lastName='Campos', firstName='Rafael', street="724 Vinca Dr.", city='Grove', state='CA', postalCode='90092', commission=23457.50, rate=0.06)
+        
+        #stmt1 = insert(rep).values(repNum='15', lastName='Campos', firstName='Rafael', street="724 Vinca Dr.", city='Grove', state='CA', postalCode='90092', commission=23457.50, rate=0.06)
         #stmt2 = insert(rep).values(repNum='30', lastName='Gradey', firstName='Megan', street='632 Liatris St.', city='Fullton', state='CA', postalCode='90085', commission=41317.00, rate=0.08)
+        #stmt3 = insert(rep).values(repNum='45', lastName='Tian', firstName='Hui',street='1785 Tyler Ave.',city='Northfield',state='CA',postalCode='90098', commission=27789.25, rate=0.06)
+        #stmt4 = insert(rep).values(repNum='60',lastName='Sefton', firstName='Janet', street='267 Oakley St.', city='Congaree', state='CA', postalCode='90097', commission=0.00, rate=0.06)
         #db.session.execute(stmt1)
         #db.session.execute(stmt2) 
-        #db.session.commit()  
+        #db.session.execute(stmt3)
+        #db.session.execute(stmt4)
+        #db.session.commit()
+
+
+
+        #VALUES  ('126','Toys Galore','28 Laketon St.','Fullton','CA','90085',1210.25,7500.00,'15');
+
+        #VALUES ('260','Brookings Direct','452 Columbus Dr.','Grove','CA','90092',575.00,10000.00,'30');
+
+        #VALUES ('334','The Everything Shop','342 Magee St.','Congaree','CA','90097',2345.75,7500.00,'45');
+
+        #VALUES ('386','Johnson''s Department Store','124 Main St.','Northfield','CA','90098',879.25,7500.00,'30');
+
+        #VALUES ('440','Grove Historical Museum Store','3456 Central Ave.','Fullton','CA','90085',345.00,5000.00,'45');
         
+
+        #stmt1 = insert(customer).values('126','Toys Galore','28 Laketon St.','Fullton','CA','90085',1210.25,7500.00,'15')
+
+
     #Actually begins the program
     app.run(debug=True)
    
