@@ -156,10 +156,10 @@ def updateCreditLimit(name, newCreditLimit):
 def generateReport():
     
     #firstNames = select(rep.lastName, rep.firstName).select_from("rep").join("customer", rep.repNum == customer.repNum)
-    firstNames = select(rep.lastName, rep.firstName, func.count(), func.sum(rep.repNum) / (func.count() + 1)).group_by(rep.lastName, rep.firstName)
-    names = db.session.execute(firstNames)
+    repInfo = select(rep.lastName, rep.firstName, func.count(), func.sum(rep.repNum) / (func.count() + 1)).group_by(rep.lastName, rep.firstName)
+    info = db.session.execute(repInfo)
   
-    return render_template("report.html", repNames = names)
+    return render_template("report.html", repNames = info)
 
 @app.route("/deleteRep/<repNum>")
 def deleteRep(repNum):
