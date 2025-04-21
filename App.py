@@ -14,8 +14,7 @@ Scss(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 db = SQLAlchemy(app)
 
-#Creating a table in SQLAlchemy API
-
+#Database models
 class rep(db.Model):
     __tablename__ = 'Rep'
     repNum = db.Column('RepNum', CHAR(2), primary_key=True)
@@ -114,6 +113,7 @@ def repPage():
 def index():
     return render_template("index.html")
 
+@app.route("/customerUpdate", methods=["GET", "POST"])
 def updateCreditLimit(name, newCreditLimit):
     cust = customer.query.get(name)
     cust.creditLimit = newCreditLimit
@@ -122,16 +122,15 @@ def updateCreditLimit(name, newCreditLimit):
 @app.route("/customerReport", methods=["GET", "POST"])
 def customerReport():
     customerInfo = None  # Default: don't show anything
-
     if request.method == "POST":
         name = request.form.get("custName", "").strip()
 
         if not name:
-            customerInfo = "No customer name entered."
+            customerInfo = {"ENTER CUSTOMER NAME", "0"}
         else:
             stmt = select(
                         customer.customerName, 
-                        func.sum(orderLine.quotedPrice))\
+                        func.coalesce(func.sum(orderLine.quotedPrice), 0))\
                             .where(func.lower(customer.customerName) == name.lower())\
                             .outerjoin(orders, orders.customerNum == customer.customerNum)\
                             .outerjoin(orderLine, orderLine.orderNum == orders.orderNum)\
@@ -140,24 +139,23 @@ def customerReport():
             result = db.session.execute(stmt).one_or_none()
 
             if result is None:
-                customerInfo = f"No data found for '{name}'."
+                customerInfo = f"No data found for '{name}'.", "0"
             else:
-                total = result[1] if result[1] is not None else 0
-                customerInfo = f"Customer Name: {result[0]}, Total Quoted Price: ${total:.2f}"
+                customerInfo = result
 
     return render_template("customerReport.html", customerInfo=customerInfo)
 
 @app.route("/report/")
 def generateReport():
     repInfo = select(rep.lastName, rep.firstName,\
-                      func.count(customer.customerNum),\
-                      func.sum(customer.balance) / func.count(customer.customerNum))\
-                        .group_by(rep.lastName, rep.firstName)\
-                        .outerjoin(customer, customer.repNum == rep.repNum)
+        func.count(customer.customerNum),\
+        func.coalesce(func.round(func.sum(customer.balance) / func.count(customer.customerNum), 2), 0))\
+            .group_by(rep.lastName, rep.firstName)\
+            .outerjoin(customer, customer.repNum == rep.repNum)
     
     info = db.session.execute(repInfo)
   
-    return render_template("report.html", repNames = info)
+    return render_template("report.html", result = info)
 
 @app.route("/deleteRep/<repNum>")
 def deleteRep(repNum):
@@ -175,46 +173,6 @@ def deleteRep(repNum):
         print(f"ERROR:{e}")
         #Return an error as well, beause this function must return something.
         return f"ERROR:{e}"
-
-#Page/fucntion to delete an item from the list.
-@app.route("/delete/<int:id>")
-def delete(id: int):
-    #Get the task that needs to be deleted based on the id provided.
-    delete_Task = MyTask.query.get_or_404(id)
-    try:
-        #connect to the session and delete the task by id
-        db.session.delete(delete_Task)
-        #commit changes to the database
-        db.session.commit()
-        #Once changes are made, update the homepage of the website
-        return redirect("/")
-    except Exception as e:
-        #Print out an error
-        print(f"ERROR:{e}")
-        #Return an error as well, beause this function must return something.
-        return f"ERROR:{e}"
-
-#Page/fucntion to update an item from the list.
-@app.route("/update/<int:id>", methods = ["GET","POST"])
-def update(id:int):
-    #Get the task that needs to be updated based on the id provided.
-    task = MyTask().query.get_or_404(id)
-    #if the method is for POSTing (This is a redundant step to ensure typing in the URL doesnt just do this anyway)
-    if request.method == "POST":
-        #set the content of the task with current id to the current value in the input form.
-        task.content == request.form["content"]
-        try:
-            #Commit the updates to the database
-            db.session.commit()
-            #Update the homepage
-            return redirect("/")
-        except Exception as e:
-            #Print out an error
-            print(f"ERROR:{e}")
-            #Return an error as well, beause this function must return something.
-            return f"ERROR:{e}"    
-    else:
-        return "HOME"
 
 #Page/function for logging into the database
 @app.route("/login", methods=["GET", "POST"])

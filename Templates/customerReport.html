@@ -1,14 +1,52 @@
 
 {% block content %}
-  {% if customerInfo %}
-    <p>{{ customerInfo }}</p>
-  {% endif %}
+    <style>
+        table {
+        border-collapse: collapse;
+        width: 100%;
+        }
+  
+        th, td {
+        border: 1px solid #ccc;
+        padding: 8px 12px;
+        text-align: left;
+        }
+    </style>
+    {% if customerInfo %}
+        <table>
+            <tr>
+                <th>Customer Name</th>
+                <th>Total Quoted Price</th>
+            </tr>
+            <tr>
+                <td>{{ customerInfo[0] }}</td>
+                <td>${{ customerInfo[1] }}</td>
+            <tr>
+        <table>
+    {% endif %}
 
-  <form action="#" method="post">
+    <form action="#" method="post">
       <p>Enter customer name to view info for:</p>
       <p><input type="text" name="custName"></p>
       <p><input type="submit" value="View Report" id="btn_add"></p>
-  </form>
+    </form>
 {% endblock %}
 
-<a href="/" class="btn">Back to Home</a>
+<style>
+    .button-link {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+  
+    .button-link:hover {
+      background-color: #0056b3;
+    }
+</style>
+
+<a href="/" class="button-link">Back to Home</a>

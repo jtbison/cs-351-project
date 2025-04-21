@@ -1,7 +1,68 @@
-{% for repName in repNames %}
-        <!-- Populate each row of the table -->
-            <!-- Display the task content-->
-        {{repName}}<br>
-{% endfor %}
+<style>
+    .content{
+        text-align: center;
+        border-style: solid;
+        max-width: 400px;
+        margin: 10px auto;
+        border-radius: 10px;
+    }
 
-<a href="/" class="btn">Back to Home</a>
+    table{
+        margin-left: 20px;
+        margin-right: 20px;
+        border-style: solid;
+        border-spacing: 10px;
+        border-radius: 10px;
+        margin: 20px auto;
+    }
+
+     input{
+         /* margin: 20px auto; */
+         margin-top: 10px;
+         margin-bottom: 10px;
+     }
+
+     .divider{
+         border: none;
+         height: 2px;
+         background-color: black;
+         width: 100%;
+         margin: 10px 0 20px 0;
+     }
+ </style>
+
+<Table>
+    <tr>
+        <th>Last Name</th>
+        <th>First Name</th>
+        <th>Customer Count</th>
+        <th>Average Customer Balance</th>
+    </tr>
+    {% for repData in result %}
+        <!-- Display the task content-->
+        <tr>
+            <td>{{repData[0]}}</td>
+            <td>{{repData[1]}}</td>
+            <td>{{repData[2]}}</td>
+            <td>${{repData[3]}}</td>
+        </tr>
+    {% endfor %}    
+</Table>
+
+<style>
+    .button-link {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+  
+    .button-link:hover {
+      background-color: #0056b3;
+    }
+</style>
+<a href="/" class="button-link">Back to Home</a>

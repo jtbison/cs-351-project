@@ -33,13 +33,13 @@
             margin: 20px auto;
         }
  
-         input{
+        input{
              /* margin: 20px auto; */
              margin-top: 10px;
              margin-bottom: 10px;
          }
  
-         .divider{
+        .divider{
              border: none;
              height: 2px;
              background-color: black;
@@ -47,8 +47,21 @@
              margin: 10px 0 20px 0;
          }
      </style>
- 
-     <hr class="divider">
+    
+    <style>
+        table {
+          border-collapse: collapse; /* ensures borders don’t double up */
+          width: 100%;
+        }
+      
+        th, td {
+          border: 1px solid #ccc;
+          padding: 8px 12px;
+          text-align: left;
+        }
+    </style>
+
+    <hr class="divider">
      
      <!-- When there are no tasks present in the database -->
      {% if tasks | length < 1%}
@@ -59,8 +72,8 @@
         <tr>
             <!-- The following are header columns-->
             <th>Rep Num</th>
-            <th>First Name</th>
             <th>Last Name</th>
+            <th>First Name</th>
             <th>Street</th>
             <th>City</th>
             <th>State</th>
@@ -73,59 +86,122 @@
          <!-- Loop through all the values in MyTask table-->
          {% for task in tasks%}
          <!-- Populate each row of the table -->
-         <tr>
+        <tr>
              <!-- Display the task content-->
-             <th>
-                 {{task.repNum}}
-                 {{task.lastName}}
-                 {{task.firstName}}
-                 {{task.street}}
-                 {{task.city}}
-                 {{task.state}}
-                 {{task.postalCode}}
-                 {{task.commission}}
-                 {{task.rate}}
-             </th>
-        
-             <!-- Create buttons to delete, update, or -->
-             <th>
-                 <!-- Button that routes to the delete for a specific ID -->
-                 <a href="/deleteRep/{{task.repNum}}"> Delete </a>
-                 <br/>
-                 <!-- Button that routes to the update for a specific ID -->
-                 <a href="/updateRep/{{task.repNum}}"> Update </a>
-             </th>
-         </tr>
-         {% endfor %}
-     </table>
-     {% endif %}
+            <td>{{task.repNum}}</td>
+            <td>{{task.lastName}}</td>
+            <td>{{task.firstName}}</td>
+            <td>{{task.street}}</td>
+            <td>{{task.city}}</td>
+            <td>{{task.state}}</td>
+            <td>{{task.postalCode}}</td>
+            <td>${{task.commission}}</td>
+            <td>{{task.rate}}</td>
+    
+            <!-- Button that routes to the delete for a specific ID -->
+            <td><a href="/deleteRep/{{task.repNum}}"> Delete </a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
      
-     <h3 class="divider"></h3>
+    <h3 class="divider"></h3>
  
-     <!-- Place to take in input from the user from the home page  (Action says where the data should be sent when submitted, method states how.)-->
-     <form action="#" method="post">
-        <p>Rep Number:</p>
-        <p><input type = "text" name = "repNum"></p>
-        <p>First Name:</p>
-        <p><input type = "text" name = "f_Name"/></p>
-        <p>Last Name:</p>
-        <p><input type = "text" name = "l_Name"/></p>
-        <p>Street:</p>
-        <p><input type = "text" name = "street"/></p>
-        <p>City:</p>
-        <p><input tpe = "text" name = "city"/></p>
-        <p>State:</p>
-        <p><input tpe = "text" name = "state"/></p>
-        <p>PostalCode:</p>
-        <p><input tpe = "text" name = "postalCode"/></p>
-        <p>Commission:</p>
-        <p><input tpe = "text" name = "commission"/></p>
-        <p>Rate:</p>
-        <p><input tpe = "text" name = "rate"/></p>
+    <style>
+        .form-row {
+          display: flex;
+          flex-wrap: nowrap;
+          gap: 4px;
+          margin-top: 20px;
+        }
+      
+        .form-field {
+          display: flex;
+          flex-direction: column;
+          flex: 1 1 auto;
+          min-width: 120px;
+        }
+      
+        .form-field label {
+          margin-bottom: 4px;
+          font-weight: bold;
+        }
+      
+        #btn_add {
+          margin-top: 20px;
+        }
+    </style>
+      
+    <form action="#" method="post">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="repNum">Rep Number:</label>
+            <input type="text" name="repNum" id="repNum">
+          </div>
+      
+          <div class="form-field">
+            <label for="f_Name">First Name:</label>
+            <input type="text" name="f_Name" id="f_Name">
+          </div>
+      
+          <div class="form-field">
+            <label for="l_Name">Last Name:</label>
+            <input type="text" name="l_Name" id="l_Name">
+          </div>
+      
+          <div class="form-field">
+            <label for="street">Street:</label>
+            <input type="text" name="street" id="street">
+          </div>
+      
+          <div class="form-field">
+            <label for="city">City:</label>
+            <input type="text" name="city" id="city">
+          </div>
+      
+          <div class="form-field">
+            <label for="state">State:</label>
+            <input type="text" name="state" id="state">
+          </div>
+      
+          <div class="form-field">
+            <label for="postalCode">Postal Code:</label>
+            <input type="text" name="postalCode" id="postalCode">
+          </div>
+      
+          <div class="form-field">
+            <label for="commission">Commission:</label>
+            <input type="text" name="commission" id="commission">
+          </div>
+      
+          <div class="form-field">
+            <label for="rate">Rate:</label>
+            <input type="text" name="rate" id="rate">
+          </div>
+        </div>
+      
+        <input type="submit" value="Add Rep" id="btn_add">
+    </form>
+</div>
 
-        <input type = "submit" value = "Add Rep" id = "btn_add">
-     </form>
- </div>
- {%endblock%}
 
- <a href="/" class="btn">Back to Home</a>
+<style>
+    .button-link {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+  
+    .button-link:hover {
+      background-color: #0056b3;
+    }
+</style>
+
+<a href="/" class="button-link">Back to Home</a>
+{%endblock%}
+
