@@ -8,21 +8,16 @@
         h1 { color: green; }
         .error { color: red; }
     </style>
+    
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Create account</a></li>
-        </ul>
-    </nav>
     <h1>Login to your account</h1>
     
     {% if error %}
         <p class="error">{{ error }}</p>
     {% endif %}
 
-    <form action="/login" method="post">
+    <form action="/" method="post">
         <label for="username">Username:</label>
         <input type="text" name="username" required />
         <label for="password">Password:</label>
@@ -45,7 +40,5 @@
           background-color: #0056b3;
         }
     </style>
-    
-    <a href="/" class="button-link">Back to Home</a>
 </body>
 </html>

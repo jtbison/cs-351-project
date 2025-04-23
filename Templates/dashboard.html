@@ -1,21 +1,77 @@
+{% extends "base.html"%}
+
+{% block head %}
+<title> New inheritance idea for making pages</title>
+{%endblock%}
+
+<!-- These lines use the jango API to allow more intelegent HTML implementations.
+ Here specifically, they are used to extend base.html to make this file more simple,
+ by hiding all of the unimportant, yet manditory HTML syntax.-->
+{% block body %}
+
+<div class = "content">
+    <h1>CS 351 Project</h1>
+
+    <form action="/repView" method="get">
+        <input type = "submit" value = "View/Edit Reps" id = "btn_rep"/>
+    </form>
+
+    <form action="/report" method="get">
+        <input type = "submit" value = "View Rep Report" id = "btn_report"/>
+    </form>
+
+    <form action="/customerReport" method="post">
+        <input type = "submit" value = "View Customer Report" id = "btn_cust_report" />
+    </form>
+
+
+    <h1>You are logged in as {{ username }}</h1>
+    <nav>
+        <a href="/logout">Logout</a></li>
+    </nav>
+
+    <style>
+        .content{
+            text-align: center;
+            border-style: solid;
+            max-width: 400px;
+            margin: 10px auto;
+            border-radius: 10px;
+        }
+
+        table{
+            margin-left: 20px;
+            margin-right: 20px;
+            border-style: solid;
+            border-spacing: 10px;
+            border-radius: 10px;
+            margin: 20px auto;
+        }
+
+        input{
+            margin: 10px auto;
+        }
+
+        .divider{
+            border: none;
+            height: 2px;
+            background-color: black;
+            width: 100%;
+            margin: 10px 0 10px 0;
+        }
+    </style>
+</div>
+{%endblock%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Database Dashboard</title>
     <style>
         h1 { color: green; }
     </style>
 </head>
-<body>
-    <nav>
-        <ul>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
-    <h1>You are logged in as {{ username }}!</h1>
-</body>
 
 <style>
     .button-link {
@@ -34,5 +90,4 @@
     }
 </style>
 
-<a href="/" class="button-link">Back to Home</a>
 </html>

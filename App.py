@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from sqlalchemy import func, text, CHAR, DECIMAL, DATE, ForeignKey, select
+from sqlalchemy import func, text, CHAR, DECIMAL, DATE, ForeignKey, select, insert, update
 
 #Creating a flask instance
 app = Flask(__name__)
@@ -25,10 +25,12 @@ login_manager.login_view = "login"
 
 #Database models
 class Admins(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
 
+    def __repr__(self):
+        return f"{self.id} {self.username} {self.password}"
 
 class rep(db.Model):
     __tablename__ = 'Rep'
@@ -79,14 +81,17 @@ class item(db.Model):
     storehouse = db.Column('Storehouse', CHAR(1))
     price = db.Column('Price', DECIMAL(6, 2))
 
-class MyTask(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    content = db.Column(db.String(100), nullable = False)
-    complete = db.Column(db.Integer, default = 0)
-    created = db.Column(db.DateTime, default = datetime.utcnow)
+# website start login
+@app.route("/dashboard")
+@login_required
+def index():
+    authenticated = current_user.is_authenticated
+    if authenticated:
+        buttonText = "Log Out"
+    else:
+        buttonText = "Log In"
 
-    def __repr__(self) -> str:
-        return f"Task {self.id}"
+    return render_template("dashboard.html", username = current_user.username)
 
 @app.route("/repView", methods=["POST", "GET"])
 @login_required
@@ -123,18 +128,7 @@ def repPage():
         tasks = rep.query.order_by(rep.repNum).all()
         #Render the website  IMPORTANT!!! in "tasks = tasks" the left tasks refers to "tasks" in idex.html, right tasks refers to "tasks" as defined above.
         return render_template("rep.html", tasks = tasks)
-
-# website homepage
-@app.route("/")
-def index():
-    authenticated = current_user.is_authenticated
-    if authenticated:
-        buttonText = "Log Out"
-    else:
-        buttonText = "Log In"
-
-    return render_template("index.html", userIsAuthenticated = authenticated, loginButton = buttonText)
-
+    
 @app.route("/customerUpdate", methods=["GET", "POST"])
 @login_required
 def updateCreditLimit(name, newCreditLimit):
@@ -208,13 +202,8 @@ def logout():
     return redirect("/")
 
 # Login route
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def login():
-    # redirect to account dashboard if already logged in
-    if current_user.is_authenticated:
-        return redirect("/dashboard")
-
-    # otherwise, go to login page
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -227,7 +216,7 @@ def login():
         else:
             return render_template("login.html", error="Invalid username or password")
     
-    return render_template("login.html")
+    return render_template("login.html", error = None)
 
 # Load user for Flask-Login
 @login_manager.user_loader
@@ -288,12 +277,22 @@ if __name__ in "__main__" :
 
                     # Assert in case of error
                     except:
-                        print('Ops')
+                        print('Nothing inserted')
 
                     # Finally, clear command string
                     finally:
                         sql_command = ''
-
+        
+        try:
+            defaultPasword = "supersecret"
+            updateAdmin = update(Admins)\
+                .where(Admins.username == "Admin")\
+                .values(password = generate_password_hash(defaultPasword, method="pbkdf2:sha256"))
+            db.session.execute(updateAdmin)
+            db.session.commit() 
+        except:
+            print(Admins.query.all())
+            print("Admin not added")
     #Actually begins the program
     app.run(debug=True)
    
