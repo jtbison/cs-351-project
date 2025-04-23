@@ -1,11 +1,10 @@
 #Imports
 from flask import Flask, render_template, redirect, request, url_for
 from flask_scss import Scss
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
-from sqlalchemy import func, text, CHAR, DECIMAL, DATE, ForeignKey, select, insert, update
+from sqlalchemy import func, text,select, insert, update
+from Models import db, customer, rep, admins, orderLine, orders
 
 #Creating a flask instance
 app = Flask(__name__)
@@ -16,82 +15,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "supersecretkey"
 
-# Initialize database and login manager
-db = SQLAlchemy(app)
+db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-
-#Database models
-class Admins(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(250), unique=True, nullable=False)
-    password = db.Column(db.String(250), nullable=False)
-
-    def __repr__(self):
-        return f"{self.id} {self.username} {self.password}"
-
-class rep(db.Model):
-    __tablename__ = 'Rep'
-    repNum = db.Column('RepNum', CHAR(2), primary_key=True)
-    lastName = db.Column('LastName', CHAR(15))
-    firstName = db.Column('FirstName', CHAR(15))
-    street = db.Column('Street', CHAR(15))
-    city = db.Column('City', CHAR(15))
-    state = db.Column('State', CHAR(2))
-    postalCode = db.Column('PostalCode', CHAR(5))
-    commission = db.Column('Commision', DECIMAL(7, 2))
-    rate = db.Column('Rate', DECIMAL(3, 2))
-    
-    def __repr__(self) -> str:
-        return self.firstName + self.lastName
-
-class customer(db.Model):
-    __tablename__ = 'Customer'
-    customerNum = db.Column('CustomerNum', CHAR(3), primary_key=True)
-    customerName = db.Column('CustomerName', CHAR(35), nullable=False)
-    street = db.Column('Street', CHAR(20))
-    city = db.Column('City', CHAR(15))
-    state = db.Column('State', CHAR(2))
-    postalCode = db.Column('PostalCode', CHAR(5))
-    balance = db.Column('Balance', DECIMAL(8, 2))
-    creditLimit = db.Column('CreditLimit', DECIMAL(8, 2))
-    repNum = db.Column('RepNum', ForeignKey("rep.repNum"))
-
-class orders(db.Model):
-    __tablename__ = 'Orders'
-    orderNum = db.Column('OrderNum', CHAR(3), primary_key=True)
-    orderDate = db.Column('OrderDate', DATE)
-    customerNum = db.Column("CustomerNum", ForeignKey("customer.customerNum"))
-
-class orderLine(db.Model):
-    __tablename__ = 'OrderLine'
-    orderNum = db.Column('OrderNum', CHAR(5), ForeignKey("orders.orderNum"), primary_key=True)
-    itemNum = db.Column('ItemNum', CHAR(4), ForeignKey("item.itemNum"), primary_key=True)
-    numOrdered = db.Column('NumOrdered', DECIMAL(6, 2))
-    quotedPrice = db.Column('QuotedPrice', DECIMAL(6, 2))
-
-class item(db.Model):
-    __tablename__ = 'Item'
-    itemNum = db.Column('ItemNum', CHAR(4), primary_key=True)
-    description = db.Column('Description', CHAR(30))
-    onHand = db.Column('OnHand', DECIMAL(4, 0))
-    category = db.Column('Category', CHAR(3))
-    storehouse = db.Column('Storehouse', CHAR(1))
-    price = db.Column('Price', DECIMAL(6, 2))
-
-# website start login
-@app.route("/dashboard")
-@login_required
-def index():
-    authenticated = current_user.is_authenticated
-    if authenticated:
-        buttonText = "Log Out"
-    else:
-        buttonText = "Log In"
-
-    return render_template("dashboard.html", username = current_user.username)
 
 @app.route("/repView", methods=["POST", "GET"])
 @login_required
@@ -208,7 +136,7 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        user = Admins.query.filter_by(username=username).first()
+        user = admins.query.filter_by(username=username).first()
 
         if user and check_password_hash(user.password, password):
             login_user(user)
@@ -221,7 +149,7 @@ def login():
 # Load user for Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
-    return Admins.query.get(int(user_id))
+    return admins.query.get(int(user_id))
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
@@ -229,12 +157,12 @@ def register():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        if Admins.query.filter_by(username=username).first():
+        if admins.query.filter_by(username=username).first():
             return render_template("sign_up.html", error="Username already taken!")
 
         hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
 
-        new_user = Admins(username=username, password=hashed_password)
+        new_user = admins(username=username, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
@@ -252,9 +180,9 @@ def unauthorized_callback():
     return redirect("/")
 
 #start the app itself running
-if __name__ in "__main__" :
+if __name__ == "__main__" :
    
-    #Begins the databse instance
+    #Begins the database instance
     with app.app_context():
         db.create_all()
         
@@ -288,19 +216,19 @@ if __name__ in "__main__" :
         try:
             defaultUsername = "Admin"
             defaultPasword = "supersecret"
-            defaultUser = Admins.query.filter_by(username=defaultUsername).first()
+            defaultUser = admins.query.filter_by(username=defaultUsername).first()
 
             hashedPassword = generate_password_hash(defaultPasword, method="pbkdf2:sha256")
 
             if not defaultUser:
-                addAdmin = insert(Admins).values(username=defaultUsername, password=hashedPassword)
+                addAdmin = insert(admins).values(username=defaultUsername, password=hashedPassword)
                 db.session.execute(addAdmin)
                 db.session.commit()
-                print("Inserted default account")
+                print("Inserted default")
 
-            elif defaultUser and not (defaultUser.password == hashedPassword):
-                updateAdmin = update(Admins)\
-                .where(Admins.username == "Admin")\
+            elif defaultUser and not (defaultUser.password == check_password_hash(defaultPasword)):
+                updateAdmin = update(admins)\
+                .where(admins.username == "Admin")\
                 .values(password = generate_password_hash(defaultPasword, method="pbkdf2:sha256"))
                 db.session.execute(updateAdmin)
                 db.session.commit()
