@@ -248,7 +248,7 @@ def dashboard():
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
-    return redirect(url_for('/'))
+    return redirect("/")
 
 #start the app itself running
 if __name__ in "__main__" :
