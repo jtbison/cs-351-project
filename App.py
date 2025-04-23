@@ -1,7 +1,9 @@
 #Imports
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, url_for
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy import func, text, CHAR, DECIMAL, DATE, ForeignKey, select
 
@@ -11,9 +13,22 @@ Scss(app)
 
 #Initalize an instance of a database named "database"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECRET_KEY"] = "supersecretkey"
+
+# Initialize database and login manager
 db = SQLAlchemy(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
 #Database models
+class Admins(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(250), unique=True, nullable=False)
+    password = db.Column(db.String(250), nullable=False)
+
 class rep(db.Model):
     __tablename__ = 'Rep'
     repNum = db.Column('RepNum', CHAR(2), primary_key=True)
@@ -73,6 +88,7 @@ class MyTask(db.Model):
         return f"Task {self.id}"
 
 @app.route("/repView", methods=["POST", "GET"])
+@login_required
 def repPage():
 #Function to add a task
     if request.method == "POST":
@@ -113,12 +129,14 @@ def index():
     return render_template("index.html")
 
 @app.route("/customerUpdate", methods=["GET", "POST"])
+@login_required
 def updateCreditLimit(name, newCreditLimit):
     cust = customer.query.get(name)
     cust.creditLimit = newCreditLimit
     db.session.commit()
 
 @app.route("/customerReport", methods=["GET", "POST"])
+@login_required
 def customerReport():
     customerInfo = None  # Default: don't show anything
     if request.method == "POST":
@@ -145,6 +163,7 @@ def customerReport():
     return render_template("customerReport.html", customerInfo=customerInfo)
 
 @app.route("/report/")
+@login_required
 def generateReport():
     repInfo = select(rep.lastName, rep.firstName,\
         func.count(customer.customerNum),\
@@ -157,6 +176,7 @@ def generateReport():
     return render_template("report.html", result = info)
 
 @app.route("/deleteRep/<repNum>")
+@login_required
 def deleteRep(repNum):
     #Get the task that needs to be deleted based on the id provided.
     
@@ -173,12 +193,62 @@ def deleteRep(repNum):
         #Return an error as well, beause this function must return something.
         return f"ERROR:{e}"
 
-#Page/function for logging into the database
+# Logout route
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+# Login route
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # if(request.method = "POST"):
-    #     return redirect("/")
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        user = Admins.query.filter_by(username=username).first()
+
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            return redirect("/dashboard")
+        else:
+            return render_template("login.html", error="Invalid username or password")
+
     return render_template("login.html")
+
+# Load user for Flask-Login
+@login_manager.user_loader
+def load_user(user_id):
+    return Admins.query.get(int(user_id))
+
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if Admins.query.filter_by(username=username).first():
+            return render_template("sign_up.html", error="Username already taken!")
+
+        hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
+
+        new_user = Admins(username=username, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return redirect(url_for("login"))
+    
+    return render_template("sign_up.html")
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template("dashboard.html", username=current_user.username)
+
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect(url_for('/'))
 
 #start the app itself running
 if __name__ in "__main__" :
@@ -188,11 +258,9 @@ if __name__ in "__main__" :
         db.create_all()
         
         sql_file = open('inserts.sql','r')
-
-    # Create an empty command string
+        # Create an empty command string
         sql_command = ''
-
-    # Iterate over all lines in the sql file
+        # Iterate over all lines in the sql file
         for line in sql_file:
             # Ignore commented lines
             if not line.startswith('--') and line.strip('\n'):
