@@ -29,6 +29,7 @@ class Admins(UserMixin, db.Model):
     username = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
 
+
 class rep(db.Model):
     __tablename__ = 'Rep'
     repNum = db.Column('RepNum', CHAR(2), primary_key=True)
@@ -123,10 +124,16 @@ def repPage():
         #Render the website  IMPORTANT!!! in "tasks = tasks" the left tasks refers to "tasks" in idex.html, right tasks refers to "tasks" as defined above.
         return render_template("rep.html", tasks = tasks)
 
-#Create the homepage of the webstie
+# website homepage
 @app.route("/")
 def index():
-    return render_template("index.html")
+    authenticated = current_user.is_authenticated
+    if authenticated:
+        buttonText = "Log Out"
+    else:
+        buttonText = "Log In"
+
+    return render_template("index.html", userIsAuthenticated = authenticated, loginButton = buttonText)
 
 @app.route("/customerUpdate", methods=["GET", "POST"])
 @login_required
@@ -203,6 +210,11 @@ def logout():
 # Login route
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    # redirect to account dashboard if already logged in
+    if current_user.is_authenticated:
+        return redirect("/dashboard")
+
+    # otherwise, go to login page
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -214,7 +226,7 @@ def login():
             return redirect("/dashboard")
         else:
             return render_template("login.html", error="Invalid username or password")
-
+    
     return render_template("login.html")
 
 # Load user for Flask-Login
