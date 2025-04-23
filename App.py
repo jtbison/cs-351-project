@@ -19,7 +19,7 @@ db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"
+login_manager.login_view = "/"
 
 @app.route("/repView", methods=["POST", "GET"])
 @login_required
@@ -181,7 +181,6 @@ def unauthorized_callback():
 
 #start the app itself running
 if __name__ == "__main__" :
-   
     #Begins the database instance
     with app.app_context():
         db.create_all()
@@ -236,5 +235,3 @@ if __name__ == "__main__" :
             print("error")
     #Actually begins the program
     app.run(debug=True)
-   
-    

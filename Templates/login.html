@@ -5,12 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-        h1 { color: green; }
+        h1 { color: rgb(46, 36, 187); }
         .error { color: red; }
     </style>
     
 </head>
 <body>
+    <style>
+        header {
+            margin: 0 auto; 
+            width:250px;
+        }
+        .content{
+            text-align: center;
+            border-style: solid;
+            max-width: 400px;
+            margin: 10px auto;
+            border-radius: 10px;
+        }
+        table{
+            margin-left: 20px;
+            margin-right: 20px;
+            border-style: solid;
+            border-spacing: 10px;
+            border-radius: 10px;
+            margin: 20px auto;
+        }
+        input{
+            margin: 10px auto;
+        }
+        .divider{
+            border: none;
+            height: 2px;
+            background-color: black;
+            width: 100%;
+            margin: 10px 0 10px 0;
+        }
+    </style>
+
     <h1>Login to your account</h1>
     
     {% if error %}
@@ -20,8 +52,10 @@
     <form action="/" method="post">
         <label for="username">Username:</label>
         <input type="text" name="username" required />
+        <br>
         <label for="password">Password:</label>
         <input type="password" name="password" required />
+        <br>
         <button type="submit">Login</button>
     </form>
     <style>
