@@ -274,25 +274,38 @@ if __name__ in "__main__" :
                     try:
                         db.session.execute(text(sql_command))
                         db.session.commit()
+                        print("Inserted object")
 
                     # Assert in case of error
                     except:
-                        print('Nothing inserted')
+                        pass
 
                     # Finally, clear command string
                     finally:
                         sql_command = ''
         
+        # makes sure there is always at least the default account present on startup
         try:
+            defaultUsername = "Admin"
             defaultPasword = "supersecret"
-            updateAdmin = update(Admins)\
+            defaultUser = Admins.query.filter_by(username=defaultUsername).first()
+
+            hashedPassword = generate_password_hash(defaultPasword, method="pbkdf2:sha256")
+
+            if not defaultUser:
+                addAdmin = insert(Admins).values(username=defaultUsername, password=hashedPassword)
+                db.session.execute(addAdmin)
+                db.session.commit()
+                print("Inserted default account")
+
+            elif defaultUser and not (defaultUser.password == hashedPassword):
+                updateAdmin = update(Admins)\
                 .where(Admins.username == "Admin")\
                 .values(password = generate_password_hash(defaultPasword, method="pbkdf2:sha256"))
-            db.session.execute(updateAdmin)
-            db.session.commit() 
+                db.session.execute(updateAdmin)
+                db.session.commit()
         except:
-            print(Admins.query.all())
-            print("Admin not added")
+            print("error")
     #Actually begins the program
     app.run(debug=True)
    
