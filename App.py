@@ -23,7 +23,7 @@ login_manager.init_app(app)
 login_manager.login_view = "/"
 
 @app.route("/repView", methods=["POST", "GET"])
-# @login_required
+@login_required
 def repPage():
     # Function to add a task
     if request.method == "POST":
@@ -55,22 +55,10 @@ def repPage():
     # Function to see all current tasks (it is an else becuase we always want the website to render with all database tasks shown.)
     else:
         tasks = rep.query.order_by(rep.repNum).all()
-        # Render the website  IMPORTANT!!! in "tasks = tasks" the left tasks refers to "tasks" in idex.html, right tasks refers to "tasks" as defined above.
         return render_template("rep.html", tasks=tasks)
 
-# Create the homepage of the webstie
-
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-    tasks = rep.query.order_by(rep.repNum).all()
-    # Render the website  IMPORTANT!!! in "tasks = tasks" the left tasks refers to "tasks" in idex.html, right tasks refers to "tasks" as defined above.
-    return render_template("rep.html", tasks=tasks)
-
-
 @app.route("/customerReport", methods=["GET", "POST"])
-# @login_required
+@login_required
 def customerReport():
     customerInfo = None  # Default: don't show anything
     if request.method == "POST":
@@ -96,21 +84,19 @@ def customerReport():
 
     return render_template("customerReport.html", customerInfo=customerInfo)
 
-
 @app.route("/report/")
-# @login_required
+@login_required
 def generateReport():
     repInfo = select(rep.lastName,
                      rep.firstName,
-                     func.count(Customer.customerNum).label("num_customers"),
+                     func.count(customer.customerNum).label("num_customers"),
                      func.coalesce(func.round(func.sum(customer.balance) / func.count(customer.customerNum), 2), 0))\
         .group_by(rep.lastName, rep.firstName)\
-        .outerjoin(customer, customer.RepNum == rep.RepNum)
+        .outerjoin(customer, customer.repNum == rep.repNum)
 
     info = db.session.execute(repInfo)
 
     return render_template("report.html", result=info)
-
 
 @app.route("/deleteRep/<repNum>")
 @login_required
@@ -131,8 +117,6 @@ def deleteRep(repNum):
         return f"ERROR:{e}"
 
 # Logout route
-
-
 @app.route("/logout")
 @login_required
 def logout():
@@ -140,8 +124,6 @@ def logout():
     return redirect("/")
 
 # Login route
-
-
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -158,12 +140,9 @@ def login():
     return render_template("login.html", error=None)
 
 # Load user for Flask-Login
-
-
 @login_manager.user_loader
 def load_user(user_id):
     return admins.query.get(int(user_id))
-
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
@@ -185,15 +164,13 @@ def register():
 
     return render_template("sign_up.html")
 
-
 @app.route("/dashboard")
 @login_required
 def dashboard():
     return render_template("dashboard.html", username=current_user.username)
 
-
 @app.route("/creditUpdate", methods=["GET", "POST"])
-# @login_required
+@login_required
 def updateCreditLimit():
     message = ""
     customers = customer.query.order_by(

@@ -1,85 +1,78 @@
-{% extends "base.html"%}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Dashboard</title>
-    <style>
-        h1 { color: green; }
-    </style>
-</head>
-<!-- These lines use the jango API to allow more intelegent HTML implementations.
- Here specifically, they are used to extend base.html to make this file more simple,
- by hiding all of the unimportant, yet manditory HTML syntax.-->
+{% block styles %}
 <style>
-    .button-link {
-      display: inline-block;
-      padding: 4px 20px;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background-color 0.2s ease;
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #f8f9fa;
     }
-  
-    .button-link:hover {
-      background-color: #0056b3;
+
+    .content {
+        text-align: center;
+        border: 1px solid #ccc;
+        padding: 30px;
+        max-width: 400px;
+        width: 100%;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .button-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    input.dashboard-btn {
+        all: unset;
+        display: block;
+        padding: 10px 15px;
+        background-color: #ebf5ff;
+        color: rgb(66, 138, 255);
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        width: 200px;
+        text-align: center;
+        border: 1px solid rgb(66, 138, 255);
+    }
+
+    input.dashboard-btn:hover {
+        background-color: #0056b3;
+        color: white;
     }
 </style>
+{% endblock %}
 
-<div class = "content">
+{% block content %}
+<div class="content">
     <h1>Database Dashboard</h1>
 
-    <form action="/repView" method="get">
-        <input type = "submit" value = "View/Edit Reps" id = "btn_rep"/>
-    </form>
+    <div class="button-column">
+        <form action="/repView" method="get">
+            <input type="submit" value="View/Edit Representatives" class="dashboard-btn"/>
+        </form>
 
-    <form action="/report" method="get">
-        <input type = "submit" value = "View Rep Report" id = "btn_report"/>
-    </form>
+        <form action="/report" method="get">
+            <input type="submit" value="View Representative Reports" class="dashboard-btn"/>
+        </form>
 
-    <form action="/customerReport" method="post">
-        <input type = "submit" value = "View Customer Report" id = "btn_cust_report" />
-    </form>
+        <form action="/customerReport" method="post">
+            <input type="submit" value="View Customer Reports" class="dashboard-btn" />
+        </form>
+    </div>
 
-
-    <h1>You are logged in as {{ username }}</h1>
+    <h2>You are logged in as {{ username }}</h2>
     <nav>
-        <a href="/logout">Logout</a></li>
+        <a href="/logout">Logout</a>
     </nav>
-
-    <style>
-        .content{
-            text-align: center;
-            border-style: solid;
-            max-width: 400px;
-            margin: 10px auto;
-            border-radius: 10px;
-        }
-
-        table{
-            margin-left: 20px;
-            margin-right: 20px;
-            border-style: solid;
-            border-spacing: 10px;
-            border-radius: 10px;
-            margin: 20px auto;
-        }
-
-        input{
-            margin: 10px auto;
-        }
-
-        .divider{
-            border: none;
-            height: 2px;
-            background-color: black;
-            width: 100%;
-            margin: 10px 0 10px;
-        }
-    </style>
 </div>
-</html>
+{% endblock %}
