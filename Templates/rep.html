@@ -32,13 +32,13 @@
             border-radius: 10px;
             margin: 20px auto;
             border-collapse: collapse; /* ensures borders don’t double up */
-            width: 100%;
+            width: 80%;
         }
 
         th, td {
           border: 1px solid #ccc;
           padding: 8px 12px;
-          text-align: left;
+          text-align: center;
         }
  
         input{
@@ -66,18 +66,14 @@
           display: flex;
           flex-direction: column;
           flex: 1 1 auto;
-          min-width: 120px;
+          /* min-width: 120px; */
         }
       
         .form-field label {
           margin-bottom: 4px;
           font-weight: bold;
         }
-      
-        #btn_add {
-          margin-top: 20px;
-        }
-
+        
         .button-link {
           display: inline-block;
           padding: 10px 20px;
@@ -102,6 +98,18 @@
      <!-- When there are tasks in the database -->
      {% else %}
      <table>
+        <colgroup>
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+          <col style="width: 15%;">
+          <col style="width: 10%;">
+          <col style="width: 5%;">
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+        </colgroup>
         <tr>
             <!-- The following are header columns-->
             <th>Rep Num</th>
@@ -139,7 +147,69 @@
     {% endif %}
      
     <h3 class="divider"></h3>
-      
+
+    <!-- <table>
+      <tr>
+        <th>
+          <form action="#" method="post">
+            <div class="form-row" style="width: 100px;">
+              <div class="form-field" style="width: 100px;">
+                <label for="repNum">Rep Number:</label>
+                <input type="text" name="repNum" id="repNum">
+              </div>
+            </div>
+          </form>
+        </th>
+      </tr>
+    </table> -->
+
+    <form>
+      <table style="width: 80%;">
+        <colgroup>
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+          <col style="width: 15%;">
+          <col style="width: 10%;">
+          <col style="width: 5%;">
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+        </colgroup>        
+        <tr>
+          <!-- The following are header columns-->
+          <th>Rep Num</th>
+          <th>Last Name</th>
+          <th>First Name</th>
+          <th>Street</th>
+          <th>City</th>
+          <th>State</th>
+          <th>PostalCode</th>
+          <th>Commission</th>
+          <th>Rate</th>
+          <th>Actions</th>
+        </tr>
+        <tr>
+          <td><input type="text" name="repNum" id="repNum" style="width: 90%"></td>
+          <td><input type="text" name="f_Name" id="f_Name" style="width: 90%"></td>
+          <td><input type="text" name="l_Name" id="l_Name" style="width: 90%"></td>
+          <td><input type="text" name="street" id="street" style="width: 90%"></td>
+          <td><input type="text" name="city" id="city" style="width: 90%"></td>
+          <td><input type="text" name="state" id="state" style="width: 90%"></td>
+          <td><input type="text" name="postalCode" id="postalCode" style="width: 90%"></td>
+          <td><input type="text" name="commission" id="commission" style="width: 90%"></td>
+          <td><input type="text" name="rate" id="rate" style="width: 90%"></td>
+          <td><input type="submit" value="Add Rep" id="btn_add" style="width: 100%"></td>
+        </tr>
+      </table>
+        <!-- <input type="submit" value="Add Rep" id="btn_add" style="
+          position: absolute;
+          right: 80px;
+          top: 362px;
+        "> -->
+    </form>
+
     <form action="#" method="post">
         <div class="form-row">
           <div class="form-field">
