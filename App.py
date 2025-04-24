@@ -219,38 +219,32 @@ if __name__ == "__main__" :
                         db.session.execute(text(sql_command))
                         db.session.commit()
                         print("Inserted object")
-
                     # Assert in case of error
                     except:
                         pass
-
                     # Finally, clear command string
                     finally:
                         sql_command = ''
-        # makes sure there is always at least the default account present on startup
-        try:
-            defaultUsername = "Admin"
-            defaultPasword = "supersecret"
-            defaultUser = admins.query.filter_by(
-                username=defaultUsername).first()
+                        
+        # makes sure there is always at least the default admin account present on startup
+        defaultUsername = "Admin"
+        defaultPassword = "supersecret"
+        foundDefaultUser = admins.query.filter_by(username=defaultUsername).first()
 
-            hashedPassword = generate_password_hash(
-                defaultPasword, method="pbkdf2:sha256")
+        hashedPassword = generate_password_hash(defaultPassword, method="pbkdf2:sha256")
 
-            if not defaultUser:
-                addAdmin = insert(admins).values(
-                    username=defaultUsername, password=hashedPassword)
-                db.session.execute(addAdmin)
-                db.session.commit()
-                print("Inserted default")
+        if not foundDefaultUser:
+            addAdmin = insert(admins).values(
+                username=defaultUsername, password=hashedPassword)
+            db.session.execute(addAdmin)
+            db.session.commit()
+            print("Inserted default")
 
-            elif defaultUser and not (defaultUser.password == check_password_hash(defaultPasword)):
-                updateAdmin = update(admins)\
-                    .where(admins.username == "Admin")\
-                    .values(password=generate_password_hash(defaultPasword, method="pbkdf2:sha256"))
-                db.session.execute(updateAdmin)
-                db.session.commit()
-        except:
-            print("error")
+        elif foundDefaultUser and not check_password_hash(foundDefaultUser.password, defaultPassword):
+            updateAdmin = update(admins)\
+                .where(admins.username == "Admin")\
+                .values(password=generate_password_hash(defaultPassword, method="pbkdf2:sha256"))
+            db.session.execute(updateAdmin)
+            db.session.commit()
     # Actually begins the program
     app.run(debug=True)
