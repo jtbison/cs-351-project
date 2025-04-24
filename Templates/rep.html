@@ -31,6 +31,14 @@
             border-spacing: 10px;
             border-radius: 10px;
             margin: 20px auto;
+            border-collapse: collapse; /* ensures borders don’t double up */
+            width: 100%;
+        }
+
+        th, td {
+          border: 1px solid #ccc;
+          padding: 8px 12px;
+          text-align: left;
         }
  
         input{
@@ -46,20 +54,45 @@
              width: 100%;
              margin: 10px 0 20px 0;
          }
-     </style>
-    
-    <style>
-        table {
-          border-collapse: collapse; /* ensures borders don’t double up */
-          width: 100%;
+
+         .form-row {
+          display: flex;
+          flex-wrap: nowrap;
+          gap: 4px;
+          margin-top: 20px;
         }
       
-        th, td {
-          border: 1px solid #ccc;
-          padding: 8px 12px;
-          text-align: left;
+        .form-field {
+          display: flex;
+          flex-direction: column;
+          flex: 1 1 auto;
+          min-width: 120px;
         }
-    </style>
+      
+        .form-field label {
+          margin-bottom: 4px;
+          font-weight: bold;
+        }
+      
+        #btn_add {
+          margin-top: 20px;
+        }
+
+        .button-link {
+          display: inline-block;
+          padding: 10px 20px;
+          background-color: #007bff;
+          color: white;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: bold;
+          transition: background-color 0.2s ease;
+        }
+  
+        .button-link:hover {
+          background-color: #0056b3;
+        }
+     </style>
 
     <hr class="divider">
      
@@ -106,31 +139,6 @@
     {% endif %}
      
     <h3 class="divider"></h3>
- 
-    <style>
-        .form-row {
-          display: flex;
-          flex-wrap: nowrap;
-          gap: 4px;
-          margin-top: 20px;
-        }
-      
-        .form-field {
-          display: flex;
-          flex-direction: column;
-          flex: 1 1 auto;
-          min-width: 120px;
-        }
-      
-        .form-field label {
-          margin-bottom: 4px;
-          font-weight: bold;
-        }
-      
-        #btn_add {
-          margin-top: 20px;
-        }
-    </style>
       
     <form action="#" method="post">
         <div class="form-row">
@@ -183,24 +191,6 @@
         <input type="submit" value="Add Rep" id="btn_add">
     </form>
 </div>
-
-
-<style>
-    .button-link {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background-color 0.2s ease;
-    }
-  
-    .button-link:hover {
-      background-color: #0056b3;
-    }
-</style>
 
 <a href="/dashboard" class="button-link">Back to Home</a>
 {%endblock%}

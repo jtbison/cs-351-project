@@ -14,6 +14,14 @@
         border-spacing: 10px;
         border-radius: 10px;
         margin: 20px auto;
+        border-collapse: collapse; /* ensures borders don’t double up */
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #ccc;
+        padding: 8px 12px;
+        text-align: left;
     }
 
      input{
@@ -29,6 +37,21 @@
          width: 100%;
          margin: 10px 0 20px 0;
      }
+
+     .button-link {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+  
+    .button-link:hover {
+      background-color: #0056b3;
+    }
  </style>
 
 <Table>
@@ -49,20 +72,4 @@
     {% endfor %}    
 </Table>
 
-<style>
-    .button-link {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background-color 0.2s ease;
-    }
-  
-    .button-link:hover {
-      background-color: #0056b3;
-    }
-</style>
 <a href="/dashboard" class="button-link">Back to Home</a>
