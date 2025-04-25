@@ -197,10 +197,12 @@ def updateCreditLimit():
             message = f"Customer '{name}' not found"
     return render_template("update_credit.html", message=message, customers=customers, creditLim=creditLim)
 
+# Routes to login page if user is unauthorized
 @login_manager.unauthorized_handler
 def unauthorized_callback():
     return redirect("/")
 
+# Takes file with SQL inserts and executes each insert
 def insertFromFile():
     sql_file = open('inserts.sql', 'r')
     # Create an empty command string
@@ -253,7 +255,6 @@ if __name__ == "__main__" :
     #Begins the database instance
     with app.app_context():
         db.create_all()
-
         insertFromFile()
         ensureAdminIsPresent()
     # Actually begins the program
