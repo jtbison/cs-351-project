@@ -196,55 +196,60 @@ def updateCreditLimit():
 def unauthorized_callback():
     return redirect("/")
 
+def insertFromFile():
+    sql_file = open('inserts.sql', 'r')
+    # Create an empty command string
+    sql_command = ''
+    # Iterate over all lines in the sql file
+    for line in sql_file:
+        # Ignore commented lines
+        if not line.startswith('--') and line.strip('\n'):
+            # Append line to the command string
+            sql_command += (" " + line.strip('\n'))
+
+            # If the command string ends with ';', it is a full statement
+            if sql_command.endswith(';'):
+                # Try to execute statement and commit it
+                try:
+                    db.session.execute(text(sql_command))
+                    db.session.commit()
+                    print("Inserted object")
+                # Assert in case of error
+                except:
+                    pass
+                # Finally, clear command string
+                finally:
+                    sql_command = ''
+
+def ensureAdminIsPresent():
+    # makes sure there is always at least the default admin account present on startup
+    defaultUsername = "Admin"
+    defaultPassword = "supersecret"
+    foundDefaultUser = admins.query.filter_by(username=defaultUsername).first()
+
+    hashedPassword = generate_password_hash(defaultPassword, method="pbkdf2:sha256")
+
+    if not foundDefaultUser:
+        addAdmin = insert(admins).values(
+            username=defaultUsername, password=hashedPassword)
+        db.session.execute(addAdmin)
+        db.session.commit()
+        print("Inserted default")
+
+    elif foundDefaultUser and not check_password_hash(foundDefaultUser.password, defaultPassword):
+        updateAdmin = update(admins)\
+            .where(admins.username == "Admin")\
+            .values(password=generate_password_hash(defaultPassword, method="pbkdf2:sha256"))
+        db.session.execute(updateAdmin)
+        db.session.commit()
+
 #start the app itself running
 if __name__ == "__main__" :
     #Begins the database instance
     with app.app_context():
         db.create_all()
 
-        sql_file = open('inserts.sql', 'r')
-        # Create an empty command string
-        sql_command = ''
-        # Iterate over all lines in the sql file
-        for line in sql_file:
-            # Ignore commented lines
-            if not line.startswith('--') and line.strip('\n'):
-                # Append line to the command string
-                sql_command += (" " + line.strip('\n'))
-
-                # If the command string ends with ';', it is a full statement
-                if sql_command.endswith(';'):
-                    # Try to execute statement and commit it
-                    try:
-                        db.session.execute(text(sql_command))
-                        db.session.commit()
-                        print("Inserted object")
-                    # Assert in case of error
-                    except:
-                        pass
-                    # Finally, clear command string
-                    finally:
-                        sql_command = ''
-                        
-        # makes sure there is always at least the default admin account present on startup
-        defaultUsername = "Admin"
-        defaultPassword = "supersecret"
-        foundDefaultUser = admins.query.filter_by(username=defaultUsername).first()
-
-        hashedPassword = generate_password_hash(defaultPassword, method="pbkdf2:sha256")
-
-        if not foundDefaultUser:
-            addAdmin = insert(admins).values(
-                username=defaultUsername, password=hashedPassword)
-            db.session.execute(addAdmin)
-            db.session.commit()
-            print("Inserted default")
-
-        elif foundDefaultUser and not check_password_hash(foundDefaultUser.password, defaultPassword):
-            updateAdmin = update(admins)\
-                .where(admins.username == "Admin")\
-                .values(password=generate_password_hash(defaultPassword, method="pbkdf2:sha256"))
-            db.session.execute(updateAdmin)
-            db.session.commit()
+        insertFromFile()
+        ensureAdminIsPresent()
     # Actually begins the program
     app.run(debug=True)
