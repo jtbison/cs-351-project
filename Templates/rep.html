@@ -13,7 +13,9 @@
  {% block body %}
  
 <div class = "repContent">
-    <h1>CS 351 Project</h1>
+    <div style="text-align: center; margin-top: 20px;">
+      <h1>CS 351 Project</h1>
+    </div>
 
     <style>
         .content{
@@ -40,6 +42,11 @@
           padding: 8px 12px;
           text-align: center;
         }
+
+        .border-top td {
+          border-top: 3px solid dimgray;
+        }
+
  
         input{
              /* margin: 20px auto; */
@@ -121,7 +128,6 @@
             <th>PostalCode</th>
             <th>Commission</th>
             <th>Rate</th>
-
             <th>Actions</th>
         </tr>
          <!-- Loop through all the values in MyTask table-->
@@ -143,125 +149,35 @@
             <td><a href="/deleteRep/{{task.repNum}}"> Delete </a></td>
         </tr>
         {% endfor %}
+        <tr class="border-top">
+          <td>Rep Num</td>
+          <td>Last Name</td>
+          <td>First Name</td>
+          <td>Street</td>
+          <td>City</td>
+          <td>State</td>
+          <td>PostalCode</td>
+          <td>Commission</td>
+          <td>Rate</td>
+          <td>Actions</td>
+        </tr>
+        <tr>
+          <form action="#" method="post">
+            <td><input type="text" name="repNum" id="repNum" style="width: 90%"></td>
+            <td><input type="text" name="l_Name" id="l_Name" style="width: 90%"></td>
+            <td><input type="text" name="f_Name" id="f_Name" style="width: 90%"></td>
+            <td><input type="text" name="street" id="street" style="width: 90%"></td>
+            <td><input type="text" name="city" id="city" style="width: 90%"></td>
+            <td><input type="text" name="state" id="state" style="width: 90%"></td>
+            <td><input type="text" name="postalCode" id="postalCode" style="width: 90%"></td>
+            <td><input type="text" name="commission" id="commission" style="width: 90%"></td>
+            <td><input type="text" name="rate" id="rate" style="width: 90%"></td>
+            <td><input type="submit" value="Add Rep" id="btn_add" style="width: 100%"></td>
+          </form>
+        </tr>
     </table>
     {% endif %}
-     
-    <h3 class="divider"></h3>
 
-    <!-- <table>
-      <tr>
-        <th>
-          <form action="#" method="post">
-            <div class="form-row" style="width: 100px;">
-              <div class="form-field" style="width: 100px;">
-                <label for="repNum">Rep Number:</label>
-                <input type="text" name="repNum" id="repNum">
-              </div>
-            </div>
-          </form>
-        </th>
-      </tr>
-    </table> -->
-
-    <form>
-      <table style="width: 80%;">
-        <colgroup>
-          <col style="width: 10%;">
-          <col style="width: 10%;">
-          <col style="width: 10%;">
-          <col style="width: 15%;">
-          <col style="width: 10%;">
-          <col style="width: 5%;">
-          <col style="width: 10%;">
-          <col style="width: 10%;">
-          <col style="width: 10%;">
-          <col style="width: 10%;">
-        </colgroup>        
-        <tr>
-          <!-- The following are header columns-->
-          <th>Rep Num</th>
-          <th>Last Name</th>
-          <th>First Name</th>
-          <th>Street</th>
-          <th>City</th>
-          <th>State</th>
-          <th>PostalCode</th>
-          <th>Commission</th>
-          <th>Rate</th>
-          <th>Actions</th>
-        </tr>
-        <tr>
-          <td><input type="text" name="repNum" id="repNum" style="width: 90%"></td>
-          <td><input type="text" name="f_Name" id="f_Name" style="width: 90%"></td>
-          <td><input type="text" name="l_Name" id="l_Name" style="width: 90%"></td>
-          <td><input type="text" name="street" id="street" style="width: 90%"></td>
-          <td><input type="text" name="city" id="city" style="width: 90%"></td>
-          <td><input type="text" name="state" id="state" style="width: 90%"></td>
-          <td><input type="text" name="postalCode" id="postalCode" style="width: 90%"></td>
-          <td><input type="text" name="commission" id="commission" style="width: 90%"></td>
-          <td><input type="text" name="rate" id="rate" style="width: 90%"></td>
-          <td><input type="submit" value="Add Rep" id="btn_add" style="width: 100%"></td>
-        </tr>
-      </table>
-        <!-- <input type="submit" value="Add Rep" id="btn_add" style="
-          position: absolute;
-          right: 80px;
-          top: 362px;
-        "> -->
-    </form>
-
-    <form action="#" method="post">
-        <div class="form-row">
-          <div class="form-field">
-            <label for="repNum">Rep Number:</label>
-            <input type="text" name="repNum" id="repNum">
-          </div>
-      
-          <div class="form-field">
-            <label for="f_Name">First Name:</label>
-            <input type="text" name="f_Name" id="f_Name">
-          </div>
-      
-          <div class="form-field">
-            <label for="l_Name">Last Name:</label>
-            <input type="text" name="l_Name" id="l_Name">
-          </div>
-      
-          <div class="form-field">
-            <label for="street">Street:</label>
-            <input type="text" name="street" id="street">
-          </div>
-      
-          <div class="form-field">
-            <label for="city">City:</label>
-            <input type="text" name="city" id="city">
-          </div>
-      
-          <div class="form-field">
-            <label for="state">State:</label>
-            <input type="text" name="state" id="state">
-          </div>
-      
-          <div class="form-field">
-            <label for="postalCode">Postal Code:</label>
-            <input type="text" name="postalCode" id="postalCode">
-          </div>
-      
-          <div class="form-field">
-            <label for="commission">Commission:</label>
-            <input type="text" name="commission" id="commission">
-          </div>
-      
-          <div class="form-field">
-            <label for="rate">Rate:</label>
-            <input type="text" name="rate" id="rate">
-          </div>
-        </div>
-      
-        <input type="submit" value="Add Rep" id="btn_add">
-    </form>
-</div>
-
-<a href="/dashboard" class="button-link">Back to Home</a>
+<a href="/dashboard" class="button-link" style="display: block; width: fit-content; margin: 20px auto;">Back to Home</a>
 {%endblock%}
 
