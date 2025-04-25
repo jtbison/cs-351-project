@@ -87,7 +87,7 @@ def customerReport():
     return render_template("customerReport.html", customerInfo=customerInfo)
 
 # Generates report for all representatives
-@app.route("/report/")
+@app.route("/report")
 @login_required
 def generateReport():
     repInfo = select(rep.lastName,
