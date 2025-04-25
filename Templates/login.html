@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
+        body{
+        background: linear-gradient(to right, #f0f2f5, #c9d6ff);
+        }
         h1 { color: rgb(46, 36, 187); }
         .error { color: red; }
-    </style>
-    
-</head>
-<body>
-    <style>
         header {
             margin: 0 auto; 
             width:250px;
@@ -21,7 +19,9 @@
             border-style: solid;
             max-width: 400px;
             margin: 10px auto;
+            padding: 3%;
             border-radius: 10px;
+            background-color: white;   
         }
         table{
             margin-left: 20px;
@@ -42,8 +42,11 @@
             margin: 10px 0 10px 0;
         }
     </style>
-
-    <h1>Login to your account</h1>
+    
+</head>
+<body>
+    <div class="content">
+    <h1>Login to your account to access the database</h1>
     
     {% if error %}
         <p class="error">{{ error }}</p>
@@ -58,21 +61,6 @@
         <br>
         <button type="submit">Login</button>
     </form>
-    <style>
-        .button-link {
-          display: inline-block;
-          padding: 10px 20px;
-          background-color: #007bff;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;
-          font-weight: bold;
-          transition: background-color 0.2s ease;
-        }
-      
-        .button-link:hover {
-          background-color: #0056b3;
-        }
-    </style>
+</div>
 </body>
 </html>
