@@ -1,27 +1,28 @@
 # Imports
-from datetime import datetime
 from flask import Flask, render_template, redirect, request, url_for
 from flask_scss import Scss
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import func, text, select, insert, update
+from sqlalchemy import func, text, select, insert, update, exc
 from Models import db, customer, rep, admins, orderLine, orders
 
 # Creating a flask instance
 app = Flask(__name__)
 Scss(app)
 
-# Initalize an instance of a database named "database"
+# Initalize an instance of a database named "database" and configure
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "supersecretkey"
 
 db.init_app(app)
 
+# set up login manager
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "/"
 
+# Allows the addition/removal of representatives
 @app.route("/repView", methods=["POST", "GET"])
 @login_required
 def repPage():
@@ -57,6 +58,7 @@ def repPage():
         tasks = rep.query.order_by(rep.repNum).all()
         return render_template("rep.html", tasks=tasks)
 
+# Generates report for customers based on name
 @app.route("/customerReport", methods=["GET", "POST"])
 @login_required
 def customerReport():
@@ -84,6 +86,7 @@ def customerReport():
 
     return render_template("customerReport.html", customerInfo=customerInfo)
 
+# Generates report for all representatives
 @app.route("/report/")
 @login_required
 def generateReport():
@@ -116,14 +119,14 @@ def deleteRep(repNum):
         # Return an error as well, beause this function must return something.
         return f"ERROR:{e}"
 
-# Logout route
+# Logs out signed in admin
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect("/")
 
-# Login route
+# Login page
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -144,6 +147,7 @@ def login():
 def load_user(user_id):
     return admins.query.get(int(user_id))
 
+# Unused, but allows the addition of new admin accounts
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -164,11 +168,13 @@ def register():
 
     return render_template("sign_up.html")
 
+# Main dashboard to navigate to database functions
 @app.route("/dashboard")
 @login_required
 def dashboard():
     return render_template("dashboard.html", username=current_user.username)
 
+# Updates customer credit limit based on name
 @app.route("/creditUpdate", methods=["GET", "POST"])
 @login_required
 def updateCreditLimit():
@@ -190,7 +196,6 @@ def updateCreditLimit():
         else:
             message = f"Customer '{name}' not found"
     return render_template("update_credit.html", message=message, customers=customers, creditLim=creditLim)
-
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
@@ -215,8 +220,8 @@ def insertFromFile():
                     db.session.commit()
                     print("Inserted object")
                 # Assert in case of error
-                except:
-                    pass
+                except exc.IntegrityError as error:
+                    print("Object already in database")
                 # Finally, clear command string
                 finally:
                     sql_command = ''
