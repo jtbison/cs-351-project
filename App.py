@@ -220,10 +220,12 @@ def insertFromFile():
                 try:
                     db.session.execute(text(sql_command))
                     db.session.commit()
-                    print("Inserted object")
+                    if debugOutput:
+                        print("Inserted object")
                 # Assert in case of error
                 except exc.IntegrityError as error:
-                    print("Object already in database")
+                    if debugOutput:
+                        print("Object already in database")
                 # Finally, clear command string
                 finally:
                     sql_command = ''
@@ -252,10 +254,11 @@ def ensureAdminIsPresent():
 
 #start the app itself running
 if __name__ == "__main__" :
+    debugOutput = False
     #Begins the database instance
     with app.app_context():
         db.create_all()
         insertFromFile()
         ensureAdminIsPresent()
     # Actually begins the program
-    app.run(debug=True)
+    app.run(debug=debugOutput)
