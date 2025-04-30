@@ -28,9 +28,9 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Now you can run the flask application by using
+## Now you can run the flask application by running the app.py file
 ```bash
-flask run
+python app.py
 ```
 
 ## Then, you can navigate to the website `http://127.0.0.1:5000` to see the working flask app
