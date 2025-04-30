@@ -5,76 +5,135 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Update Credit Limit</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
     body {
+      background: linear-gradient(120deg, #f0f2f5 0%, #c9d6ff 100%);
+      font-family: 'Roboto', sans-serif;
+      min-height: 100vh;
       margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #f0f2f5, #c9d6ff);
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 100vh;
+      justify-content: center;
+      padding: 20px; 
+      box-sizing: border-box;
     }
 
-    .form-container {
-      background: white;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    .content { 
+      background: rgba(255,255,255,0.85);
+      padding: 32px 40px;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.18);
       width: 100%;
       max-width: 500px;
       text-align: center;
     }
 
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
+    h1 { 
+      color: #2e24bb;
+      margin-bottom: 24px;
+      font-size: 2rem;
+      font-weight: 700;
     }
 
     label {
-      font-weight: bold;
+      font-weight: 600; 
       display: block;
       margin-bottom: 8px;
       text-align: left;
+      color: #1e293b; 
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
     }
 
     select, input[type="number"] {
       width: 100%;
+      padding: 10px 12px; 
+      margin-bottom: 20px; 
+      border: 1px solid #cbd5e1; 
+      border-radius: 6px; 
+      font-size: 1rem; 
+      background: #ffffff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    select:focus, input[type="number"]:focus {
+      border-color: #3b82f6; 
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    
+    .action-btn {
+        all: unset;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px; 
+        font-size: 1rem; 
+        font-weight: 600;
+        border-radius: 8px; 
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
+        text-align: center;
+        border: 1px solid transparent;
+        box-sizing: border-box;
+        text-decoration: none;
+        white-space: nowrap;
+        margin: 5px; 
+    }
+    .action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .dashboard-btn {
+        background: linear-gradient(90deg, #22c55e 0%, #3b82f6 100%);
+        color: white;
+        border: none; 
+    }
+    .dashboard-btn:hover, .dashboard-btn:focus {
+        background: linear-gradient(90deg, #3b82f6 0%, #22c55e 100%);
+        color: #fff;
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+    }
+
+    
+    .message {
+      margin-top: 20px;
+      color: #16a34a; 
+      font-weight: 500;
+      background-color: #f0fdf4; 
       padding: 10px;
-      margin: 10px 0 20px 0;
-      border: 1px solid #ccc;
       border-radius: 6px;
-      font-size: 16px;
+      border: 1px solid #bbf7d0; 
+    }
+    .error-message { 
+        color: #dc2626;
+        background-color: #fee2e2;
+        border-color: #fecaca;
     }
 
-    .button-link, button[type="submit"] {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      cursor: pointer;
-      margin: 5px;
+    
+    @media (max-width: 600px) {
+        .content {
+            padding: 24px 20px;
+        }
+        h1 {
+            font-size: 1.5rem;
+        }
+        .action-btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
     }
 
-    .button-link:hover, button[type="submit"]:hover {
-      background-color: #0056b3;
-      transform: translateY(-2px);
-    }
-
-    p {
-      margin-top: 15px;
-      color: green;
-    }
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Update Credit Limit</h2>
+  <div class="content"> 
+    <h1>Update Credit Limit</h1> 
     <form method="post">
       <label for="name">Select Customer:</label>
       <select name="name" required>
@@ -86,12 +145,15 @@
       </select>
 
       <label for="credit">New Credit Limit:</label>
-      <input name="credit" type="number" step="0.01" required />
+      <input name="credit" type="number" step="0.01" required placeholder="Enter new limit"/> 
 
-      <button type="submit">Update</button>
-      <a href="/dashboard" class="button-link">Back to Home</a>
+      
+      <button type="submit" class="action-btn dashboard-btn">Update</button>
+      <a href="/dashboard" class="action-btn dashboard-btn">Back to Home</a>
     </form>
-    <p>{{ message }}</p>
+    {% if message %}
+      <p class="message">{{ message }}</p> 
+    {% endif %}
   </div>
 </body>
 </html>

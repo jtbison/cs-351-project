@@ -5,41 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-        body{
-        background: linear-gradient(to right, #f0f2f5, #c9d6ff);
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        body {
+            background: linear-gradient(120deg, #f0f2f5 0%, #c9d6ff 100%);
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        h1 { color: rgb(46, 36, 187); }
-        .error { color: red; }
-        header {
-            margin: 0 auto; 
-            width:250px;
+        h1 {
+            color: #2e24bb;
+            margin-bottom: 24px;
+            font-size: 2rem;
+            font-weight: 700;
         }
-        .content{
+        .error {
+            color: #e74c3c;
+            background: #fff0f0;
+            border-radius: 5px;
+            padding: 8px 0;
+            margin-bottom: 16px;
+        }
+        .content {
             text-align: center;
-            border-style: solid;
             max-width: 400px;
-            margin: 10px auto;
-            padding: 3%;
-            border-radius: 10px;
-            background-color: white;   
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 32px 32px 32px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.18);
         }
-        table{
-            margin-left: 20px;
-            margin-right: 20px;
-            border-style: solid;
-            border-spacing: 10px;
-            border-radius: 10px;
-            margin: 20px auto;
-        }
-        input{
-            margin: 10px auto;
-        }
-        .divider{
+        .divider {
             border: none;
             height: 2px;
-            background-color: black;
+            background-color: #e0e0e0;
             width: 100%;
-            margin: 10px 0 10px 0;
+            margin: 16px 0;
+        }
+        .login {
+            background: linear-gradient(90deg, #4CAF50 0%, #3b82f6 100%);
+            border: none;
+            color: white;
+            padding: 12px 0;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(76,175,80,0.08);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .login:hover, .login:focus {
+            background: linear-gradient(90deg, #3b82f6 0%, #4CAF50 100%);
+            transform: translateY(-2px) scale(1.02);
+        }
+        .username, .password {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 18px;
+            text-align: left;
+        }
+        .username label, .password label {
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #333;
+            letter-spacing: 0.5px;
+        }
+        .username input, .password input {
+            padding: 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 7px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.95);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+        .username input:focus, .password input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76,175,80,0.15);
+        }
+        @media (max-width: 500px) {
+            .content {
+                padding: 24px 8px;
+            }
+            h1 {
+                font-size: 1.2rem;
+            }
         }
     </style>
     
@@ -53,13 +110,17 @@
     {% endif %}
 
     <form action="/" method="post">
-        <label for="username">Username:</label>
-        <input type="text" name="username" required />
+        <div class="username">
+            <label for="username">Username:</label>
+            <input type="text" name="username" required />
+        </div>
         <br>
-        <label for="password">Password:</label>
-        <input type="password" name="password" required />
+        <div class="password">
+            <label for="password">Password:</label>
+            <input type="password" name="password" required />
+        </div>
         <br>
-        <button type="submit">Login</button>
+        <button type="submit" class="login">Login</button>
     </form>
 </div>
 </body>

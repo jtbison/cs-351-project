@@ -26,37 +26,47 @@ login_manager.login_view = "/"
 @app.route("/repView", methods=["POST", "GET"])
 @login_required
 def repPage():
+    error_message = None
     # Function to add a task
     if request.method == "POST":
-
-        # RN ALL FIELDS MUST BE FILLED OUT TO WORK
-        newRepTask = rep(repNum=request.form["repNum"],
-                         lastName=request.form["l_Name"],
-                         firstName=request.form["f_Name"],
-                         street=request.form["street"],
-                         city=request.form["city"],
-                         state=request.form["state"],
-                         postalCode=request.form["postalCode"],
-                         commission=request.form["commission"],
-                         rate=request.form["rate"])
-
-        # Attempt to connect to the database
         try:
-            # connect to the database instance.
+            # Validate and convert numeric fields
+            rep_num = int(request.form["repNum"])
+            commission = float(request.form["commission"])
+            rate = float(request.form["rate"])
+
+            newRepTask = rep(repNum=rep_num,
+                             lastName=request.form["l_Name"],
+                             firstName=request.form["f_Name"],
+                             street=request.form["street"],
+                             city=request.form["city"],
+                             state=request.form["state"],
+                             postalCode=request.form["postalCode"],
+                             commission=commission,
+                             rate=rate)
+
+            # Attempt to connect to the database
             db.session.add(newRepTask)
             # commit changes to the database,
             db.session.commit()
             # Once the changes are made to the database, redirect the user to the updated homepage.
             return redirect("/repView")
+        except ValueError:
+            error_message = "Invalid input for Rep Number, Commission, or Rate. Please enter valid numbers."
+        except exc.IntegrityError:
+             db.session.rollback() # Rollback the session in case of integrity error (e.g., duplicate repNum)
+             error_message = f"Representative Number '{request.form['repNum']}' already exists."
         except Exception as e:
+            db.session.rollback() # Rollback on other potential errors
             # Print out an error
             print(f"ERROR:{e}")
             # Return an error as well, beause this function must return something.
-            return f"ERROR:{e}"
-    # Function to see all current tasks (it is an else becuase we always want the website to render with all database tasks shown.)
-    else:
-        tasks = rep.query.order_by(rep.repNum).all()
-        return render_template("rep.html", tasks=tasks)
+            error_message = f"An unexpected error occurred: {e}"
+
+    # Fetch tasks regardless of method (GET or POST with error)
+    tasks = rep.query.order_by(rep.repNum).all()
+    # Render the template, passing tasks and any error message
+    return render_template("rep.html", tasks=tasks, error=error_message)
 
 # Generates report for customers based on name
 @app.route("/customerReport", methods=["GET", "POST"])
@@ -233,7 +243,7 @@ def insertFromFile():
 def ensureAdminIsPresent():
     # makes sure there is always at least the default admin account present on startup
     defaultUsername = "Admin"
-    defaultPassword = "supersecret"
+    defaultPassword = "supersecret" # very secret indeed XD
     foundDefaultUser = admins.query.filter_by(username=defaultUsername).first()
 
     hashedPassword = generate_password_hash(defaultPassword, method="pbkdf2:sha256")

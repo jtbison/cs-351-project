@@ -1,124 +1,293 @@
-<!-- This file extends base.html for the ease of creating future pages if ever needed. 
- I dont think that will be needed in this project, but still. -->
+{% extends "base.html"%}
 
- {% extends "base.html"%}
+{% block head %}
+<title>Representatives</title>
+{% endblock %}
 
- {% block head %}
- <title> New inheritance idea for making pages</title>
- {%endblock%}
- 
- <!-- These lines use the jango API to allow more intelegent HTML implementations.
-  Here specifically, they are used to extend base.html to make this file more simple,
-  by hiding all of the unimportant, yet manditory HTML syntax.-->
- {% block body %}
- 
-<div class = "repContent">
-    <div style="text-align: center; margin-top: 20px;">
-      <h1>CS 351 Project</h1>
-    </div>
+{% block body %}
+<div class="repContent">
+  <div style="text-align: center; margin-top: 20px;">
+    <h1>CS 351 Project - Representatives</h1>
+  </div>
 
-    <style>
-        .content{
-            text-align: center;
-            border-style: solid;
-            max-width: 400px;
-            margin: 10px auto;
-            border-radius: 10px;
-        }
- 
-        table{
-            margin-left: 20px;
-            margin-right: 20px;
-            border-style: solid;
-            border-spacing: 10px;
-            border-radius: 10px;
-            margin: 20px auto;
-            border-collapse: collapse; /* ensures borders don’t double up */
-            width: 80%;
-        }
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    body {
+      background: linear-gradient(120deg, #f0f2f5 0%, #c9d6ff 100%);
+      font-family: 'Roboto', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .repContent {
+      width: 100%;
+      max-width: 1100px;
+      margin: 32px auto 0 auto;
+      background: rgba(255,255,255,0.85);
+      border-radius: 18px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 32px 24px 24px 24px;
+    }
+    h1 {
+      color: #2e24bb;
+      margin-bottom: 24px;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate; 
+      border-spacing: 0; 
+      background: #ffffff; 
+      border-radius: 12px;
+      overflow: hidden; 
+      box-shadow: 0 4px 12px rgba(31, 38, 135, 0.1); 
+      margin: 0 auto 24px auto;
+      font-size: 0.95rem; 
+      border: 1px solid #e2e8f0; 
+    }
+    th, td {
+      border-bottom: 1px solid #e2e8f0; 
+      padding: 12px 10px; 
+      text-align: left; 
+      vertical-align: middle;
+      white-space: nowrap; 
+    }
+    
+    th, td {
+        border-left: none;
+        border-right: none;
+    }
+    
+    tr:first-child th:first-child { border-top-left-radius: 12px; }
+    tr:first-child th:last-child { border-top-right-radius: 12px; }
+    tr:last-child td:first-child { border-bottom-left-radius: 12px; }
+    tr:last-child td:last-child { border-bottom-right-radius: 12px; }
 
-        th, td {
-          border: 1px solid #ccc;
-          padding: 8px 12px;
-          text-align: center;
-        }
-
-        .border-top td {
-          border-top: 3px solid dimgray;
-        }
-
- 
-        input{
-             /* margin: 20px auto; */
-             margin-top: 10px;
-             margin-bottom: 10px;
-         }
- 
-        .divider{
-             border: none;
-             height: 2px;
-             background-color: black;
-             width: 100%;
-             margin: 10px 0 20px 0;
-         }
-
-         .form-row {
-          display: flex;
-          flex-wrap: nowrap;
-          gap: 4px;
-          margin-top: 20px;
-        }
-      
-        .form-field {
-          display: flex;
-          flex-direction: column;
-          flex: 1 1 auto;
-          /* min-width: 120px; */
-        }
-      
-        .form-field label {
-          margin-bottom: 4px;
-          font-weight: bold;
-        }
-        
-        .button-link {
-          display: inline-block;
-          padding: 10px 20px;
-          background-color: #007bff;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;
-          font-weight: bold;
-          transition: background-color 0.2s ease;
-        }
-  
-        .button-link:hover {
-          background-color: #0056b3;
-        }
-     </style>
-
-    <hr class="divider">
+    
+     tr:last-child td {
+        border-bottom: none;
+     }
      
-     <!-- When there are no tasks present in the database -->
-     {% if tasks | length < 1%}
-     <h3>Sadly, you have not put anything in the table.</h3>
-     <!-- When there are tasks in the database -->
-     {% else %}
-     <table>
+     form + tr.form-row td {
+         border-bottom: none;
+     }
+
+
+    th {
+      background: #f8fafc; 
+      color: #1e293b; 
+      font-weight: 600; 
+      font-size: 0.9rem; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px;
+      border-top: none; 
+      border-bottom-width: 2px; 
+      border-color: #e2e8f0;
+    }
+    
+    tbody tr:nth-child(even) {
+        background-color: #f8fafc;
+    }
+    
+    tbody tr:not(.form-row):hover {
+        background-color: #f1f5f9; 
+    }
+
+    .border-top td { 
+      border-top: 2px solid #94a3b8;
+      font-weight: 600;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    input[type="text"], input[type="number"] { 
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1; 
+      border-radius: 6px; 
+      font-size: 0.9rem; 
+      background: #ffffff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      margin-bottom: 0;
+      box-sizing: border-box;
+    }
+    input[type="text"]:focus, input[type="number"]:focus {
+      border-color: #3b82f6; 
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+    
+    .action-btn {
+        all: unset;
+        display: inline-flex; 
+        align-items: center;
+        justify-content: center;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s, transform 0.1s, box-shadow 0.2s;
+        text-align: center;
+        border: 1px solid transparent;
+        box-sizing: border-box;
+        text-decoration: none; 
+        white-space: nowrap;
+        border: none; 
+    }
+    .action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .delete-link { 
+        background-color: #fee2e2;
+        color: #dc2626;
+        border-color: #fecaca;
+        border: 1px solid #fecaca;
+    }
+    .delete-link:hover {
+        background-color: #dc2626;
+        color: #ffffff;
+        border-color: #dc2626;
+        text-decoration: none; 
+    }
+    .dashboard-btn { 
+        background: linear-gradient(90deg, #22c55e 0%, #3b82f6 100%); 
+        color: white;
+        width: auto; 
+        min-width: 80px;
+    }
+    .dashboard-btn:hover, .dashboard-btn:focus {
+        background: linear-gradient(90deg, #3b82f6 0%, #22c55e 100%);
+        color: #fff; 
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2); 
+    }
+
+    
+    .form-row td {
+      padding: 8px 6px;
+      vertical-align: middle;
+      background-color: #f8fafc; 
+      border-bottom: none; 
+    }
+    
+    .form-row .dashboard-btn {
+        padding: 8px 12px; 
+        font-size: 0.9rem;
+        width: 100%; 
+    }
+    
+    .form-container table {
+        margin-bottom: 0; 
+        border-top-left-radius: 0; 
+        border-top-right-radius: 0;
+        border: 1px solid #e2e8f0; 
+        border-top: none; 
+        box-shadow: 0 4px 12px rgba(31, 38, 135, 0.05); 
+    }
+    .form-container h4 {
+        margin-top: 24px; 
+        margin-bottom: 0;
+        padding: 10px;
+        background: #f8fafc;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        border: 1px solid #e2e8f0;
+        border-bottom: none; 
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        text-align: left; 
+    }
+
+    
+    #back-home-link {
+        padding: 12px 24px; 
+        font-size: 1.1rem; 
+        font-weight: 700; 
+    }
+
+    
+    @media (max-width: 900px) {
+      
+      th, td {
+          padding: 10px 8px;
+          font-size: 0.9rem;
+      }
+      .form-row td {
+          padding: 6px 5px;
+      }
+    }
+    @media (max-width: 700px) {
+      
+      .table-container { 
+          overflow-x: auto;
+          width: 100%;
+      }
+      table {
+          
+          
+          white-space: nowrap;
+          width: auto; 
+          min-width: 100%; 
+      }
+      th, td {
+          white-space: nowrap; 
+      }
+    }
+    @media (max-width: 600px) {
+      
+      th, td {
+          padding: 8px 6px;
+          font-size: 0.85rem;
+      }
+      .form-row td {
+          padding: 5px 4px;
+      }
+      .action-btn {
+          padding: 5px 10px;
+          font-size: 0.8rem;
+      }
+      .form-row .dashboard-btn {
+          padding: 6px 10px;
+          font-size: 0.85rem;
+      }
+    }
+  </style>
+
+  <hr class="divider">
+
+  {% if error %}
+    <p style="color: red; text-align: center; margin-bottom: 15px;">Error: {{ error }}</p>
+  {% endif %}
+
+  
+  <div class="table-container" style="overflow-x:auto;">
+    {% if tasks | length < 1 %}
+      <h3 style="text-align: center; margin: 20px 0;">Sadly, you have not put anything in the table.</h3>
+      
+      <table>
         <colgroup>
+          <col style="width: 8%;">
+          <col style="width: 12%;">
+          <col style="width: 12%;">
+          <col style="width: 18%;">
+          <col style="width: 10%;">
+          <col style="width: 8%;">  
           <col style="width: 10%;">
           <col style="width: 10%;">
-          <col style="width: 10%;">
-          <col style="width: 15%;">
-          <col style="width: 10%;">
-          <col style="width: 5%;">
-          <col style="width: 10%;">
-          <col style="width: 10%;">
-          <col style="width: 10%;">
-          <col style="width: 10%;">
+          <col style="width: 7%;">  
+          <col style="width: 5%;">  
         </colgroup>
-        <tr>
-            <!-- The following are header columns-->
+        <thead>
+          <tr>
             <th>Rep Num</th>
             <th>Last Name</th>
             <th>First Name</th>
@@ -129,12 +298,43 @@
             <th>Commission</th>
             <th>Rate</th>
             <th>Actions</th>
-        </tr>
-         <!-- Loop through all the values in MyTask table-->
-         {% for task in tasks%}
-         <!-- Populate each row of the table -->
-        <tr>
-             <!-- Display the task content-->
+          </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+      </table>
+    {% else %}
+      <table>
+        <colgroup>
+          <col style="width: 8%;">  
+          <col style="width: 12%;">
+          <col style="width: 12%;">
+          <col style="width: 18%;">
+          <col style="width: 10%;">
+          <col style="width: 8%;">  
+          <col style="width: 10%;">
+          <col style="width: 10%;">
+          <col style="width: 7%;">  
+          <col style="width: 5%;">  
+        </colgroup>
+        <thead> 
+          <tr>
+            <th>Rep Num</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Street</th>
+            <th>City</th>
+            <th>State</th>
+            <th>PostalCode</th>
+            <th>Commission</th>
+            <th>Rate</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody> 
+          {% for task in tasks %}
+          <tr>
             <td>{{task.repNum}}</td>
             <td>{{task.lastName}}</td>
             <td>{{task.firstName}}</td>
@@ -142,42 +342,56 @@
             <td>{{task.city}}</td>
             <td>{{task.state}}</td>
             <td>{{task.postalCode}}</td>
-            <td>${{task.commission}}</td>
-            <td>{{task.rate}}</td>
-    
-            <!-- Button that routes to the delete for a specific ID -->
-            <td><a href="/deleteRep/{{task.repNum}}"> Delete </a></td>
-        </tr>
-        {% endfor %}
-        <tr class="border-top">
-          <td>Rep Num</td>
-          <td>Last Name</td>
-          <td>First Name</td>
-          <td>Street</td>
-          <td>City</td>
-          <td>State</td>
-          <td>PostalCode</td>
-          <td>Commission</td>
-          <td>Rate</td>
-          <td>Actions</td>
-        </tr>
-        <tr>
-          <form action="#" method="post">
-            <td><input type="text" name="repNum" id="repNum" required style="width: 90%"></td>
-            <td><input type="text" name="l_Name" id="l_Name" required style="width: 90%"></td>
-            <td><input type="text" name="f_Name" id="f_Name" required style="width: 90%"></td>
-            <td><input type="text" name="street" id="street" required style="width: 90%"></td>
-            <td><input type="text" name="city" id="city" required style="width: 90%"></td>
-            <td><input type="text" name="state" id="state" required style="width: 90%"></td>
-            <td><input type="text" name="postalCode" id="postalCode" required style="width: 90%"></td>
-            <td><input type="text" name="commission" id="commission" required style="width: 90%"></td>
-            <td><input type="text" name="rate" id="rate" required style="width: 90%"></td>
-            <td><input type="submit" value="Add Rep" id="btn_add"required style="width: 100%"></td>
-          </form>
-        </tr>
-    </table>
+            <td>${{task.commission}}</td> 
+            <td>{{task.rate}}%</td> 
+            <td>
+              
+              <a href="/deleteRep/{{task.repNum}}" class="action-btn delete-link">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     {% endif %}
+  </div> 
 
-<a href="/dashboard" class="button-link" style="display: block; width: fit-content; margin: 20px auto;">Back to Home</a>
-{%endblock%}
+  
+  <div class="form-container"> 
+    <h4>Add New Representative</h4> 
+    <form action="#" method="post">
+       <table> 
+          <colgroup> 
+            <col style="width: 8%;">
+            <col style="width: 12%;">
+            <col style="width: 12%;">
+            <col style="width: 18%;">
+            <col style="width: 10%;">
+            <col style="width: 8%;">  
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 7%;">  
+            <col style="width: 5%;">  
+          </colgroup>
+          <tbody>
+            <tr class="form-row">
+              <td><input type="number" name="repNum" id="repNum" required placeholder="Num"></td>
+              <td><input type="text" name="l_Name" id="l_Name" required placeholder="Last Name"></td>
+              <td><input type="text" name="f_Name" id="f_Name" required placeholder="First Name"></td>
+              <td><input type="text" name="street" id="street" required placeholder="Street"></td>
+              <td><input type="text" name="city" id="city" required placeholder="City"></td>
+              <td><input type="text" name="state" id="state" required placeholder="ST"></td>
+              <td><input type="text" name="postalCode" id="postalCode" required placeholder="Zip"></td>
+              <td><input type="number" step="0.01" name="commission" id="commission" required placeholder="Comm"></td>
+              <td><input type="number" step="0.01" name="rate" id="rate" required placeholder="Rate (%)"></td> 
+              <td><input type="submit" value="Add Rep" class="action-btn dashboard-btn"></td>
+            </tr>
+          </tbody>
+       </table>
+    </form>
+  </div>
+
+  
+  <a href="/dashboard" id="back-home-link" class="action-btn dashboard-btn" style="display: block; width: fit-content; margin: 30px auto 0 auto;">Back to Home</a>
+</div>
+{% endblock %}
 

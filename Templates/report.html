@@ -1,75 +1,101 @@
 <style>
-    .content{
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    body {
+        background: linear-gradient(120deg, #f0f2f5 0%, #c9d6ff 100%);
+        font-family: 'Roboto', sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .content {
         text-align: center;
-        border-style: solid;
-        max-width: 400px;
-        margin: 10px auto;
-        border-radius: 10px;
+        max-width: 500px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 40px 32px 32px 32px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.18);
     }
-
-    table{
-        margin-left: 20px;
-        margin-right: 20px;
-        border-style: solid;
-        border-spacing: 10px;
-        border-radius: 10px;
-        margin: 20px auto;
-        border-collapse: collapse; /* ensures borders don’t double up */
-        width: 50%;
+    h1 {
+        color: #2e24bb;
+        margin-bottom: 24px;
+        font-size: 2rem;
+        font-weight: 700;
     }
-
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 24px;
+        background: rgba(255,255,255,0.95);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
+    }
     th, td {
-        border: 1px solid #ccc;
-        padding: 8px 12px;
+        border: 1px solid #e0e0e0;
+        padding: 10px 14px;
         text-align: center;
+        font-size: 1rem;
     }
-
-     input{
-         /* margin: 20px auto; */
-         margin-top: 10px;
-         margin-bottom: 10px;
-     }
-
-     .divider{
-         border: none;
-         height: 2px;
-         background-color: black;
-         width: 100%;
-         margin: 10px 0 20px 0;
-     }
-
-     .button-link {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background-color 0.2s ease;
+    th {
+        background: #f0f2f5;
+        color: #2e24bb;
+        font-weight: 700;
     }
-  
+    .button-link {
+        display: inline-block;
+        padding: 10px 20px;
+        background: linear-gradient(90deg, #4CAF50 0%, #3b82f6 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: background-color 0.2s, transform 0.1s;
+        margin-top: 18px;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(76,175,80,0.08);
+    }
     .button-link:hover {
-      background-color: #0056b3;
+        background: linear-gradient(90deg, #3b82f6 0%, #4CAF50 100%);
+        transform: translateY(-2px) scale(1.02);
+        color: #fff;
+        text-decoration: underline;
     }
- </style>
+    @media (max-width: 600px) {
+        .content {
+            padding: 24px 8px;
+        }
+        h1 {
+            font-size: 1.2rem;
+        }
+        table {
+            font-size: 0.95rem;
+        }
+    }
+</style>
 
-<Table>
-    <tr>
-        <th>Last Name</th>
-        <th>First Name</th>
-        <th>Customer Count</th>
-        <th>Average Customer Balance</th>
-    </tr>
-    {% for repData in result %}
-        <!-- Display the task content-->
+<div class="content">
+    <h1>Representative Report</h1>
+    <table>
         <tr>
-            <td>{{repData[0]}}</td>
-            <td>{{repData[1]}}</td>
-            <td>{{repData[2]}}</td>
-            <td>${{repData[3]}}</td>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Customer Count</th>
+            <th>Average Customer Balance</th>
         </tr>
-    {% endfor %}    
-</Table>
-
-<a href="/dashboard" class="button-link">Back to Home</a>
+        {% for repData in result %}
+            <tr>
+                <td>{{repData[0]}}</td>
+                <td>{{repData[1]}}</td>
+                <td>{{repData[2]}}</td>
+                <td>${{repData[3]}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <a href="/dashboard" class="button-link">Back to Home</a>
+</div>

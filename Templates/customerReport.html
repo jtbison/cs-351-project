@@ -1,17 +1,129 @@
+{% extends "base.html" %}
 
-{% block content %}
-    <style>
-        table {
+{% block styles %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    body {
+        background: linear-gradient(120deg, #f0f2f5 0%, #c9d6ff 100%);
+        font-family: 'Roboto', sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .content {
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 40px 32px 32px 32px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.18);
+    }
+    h1 {
+        color: #2e24bb;
+        margin-bottom: 24px;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    table {
         border-collapse: collapse;
         width: 100%;
-        }
-  
-        th, td {
-        border: 1px solid #ccc;
-        padding: 8px 12px;
+        margin-bottom: 24px;
+        background: rgba(255,255,255,0.95);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
+    }
+    th, td {
+        border: 1px solid #e0e0e0;
+        padding: 10px 14px;
         text-align: left;
+        font-size: 1rem;
+    }
+    th {
+        background: #f0f2f5;
+        color: #2e24bb;
+        font-weight: 700;
+    }
+    form {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 7px;
+        font-size: 1rem;
+        background: rgba(255,255,255,0.95);
+        transition: border-color 0.3s, box-shadow 0.3s;
+        outline: none;
+        margin-bottom: 12px;
+    }
+    input[type="text"]:focus {
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 2px rgba(76,175,80,0.15);
+    }
+    .dashboard-btn {
+        all: unset;
+        display: block;
+        width: 100%;
+        padding: 12px 0;
+        background: linear-gradient(90deg, #4CAF50 0%, #3b82f6 100%);
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(76,175,80,0.08);
+        transition: background-color 0.2s, transform 0.1s;
+        text-align: center;
+        border: none;
+        margin-bottom: 10px;
+    }
+    .dashboard-btn:hover, .dashboard-btn:focus {
+        background: linear-gradient(90deg, #3b82f6 0%, #4CAF50 100%);
+        transform: translateY(-2px) scale(1.02);
+        color: #fff;
+    }
+    .button-link {
+        display: inline-block;
+        padding: 10px 20px;
+        background: linear-gradient(90deg, #4CAF50 0%, #3b82f6 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: background-color 0.2s, transform 0.1s;
+        margin-top: 18px;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(76,175,80,0.08);
+    }
+    .button-link:hover {
+        background: linear-gradient(90deg, #3b82f6 0%, #4CAF50 100%);
+        transform: translateY(-2px) scale(1.02);
+        color: #fff;
+        text-decoration: underline;
+    }
+    @media (max-width: 500px) {
+        .content {
+            padding: 24px 8px;
         }
-    </style>
+        h1 {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <h1>Customer Report</h1>
     {% if customerInfo %}
         <table>
             <tr>
@@ -21,32 +133,15 @@
             <tr>
                 <td>{{ customerInfo[0] }}</td>
                 <td>${{ customerInfo[1] }}</td>
-            <tr>
-        <table>
+            </tr>
+        </table>
     {% endif %}
 
     <form action="#" method="post">
-      <p>Enter customer name to view info for:</p>
-      <p><input type="text" name="custName" required></p>
-      <p><input type="submit" value="View Report" id="btn_add"></p>
+        <p style="margin-bottom: 6px; font-weight: 500;">Enter customer name to view info for:</p>
+        <input type="text" name="custName" required placeholder="Customer Name">
+        <input type="submit" value="View Report" class="dashboard-btn">
     </form>
+    <a href="/dashboard" class="button-link">Back to Home</a>
+</div>
 {% endblock %}
-
-<style>
-    .button-link {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background-color 0.2s ease;
-    }
-  
-    .button-link:hover {
-      background-color: #0056b3;
-    }
-</style>
-
-<a href="/dashboard" class="button-link">Back to Home</a>
