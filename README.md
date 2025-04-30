@@ -40,7 +40,7 @@ Username: `Admin`
 Password: `supersecret`
 
 
-## Dependencies
+## Dependencies (also in requirements.txt)
 `blinker`
 
 `click`
