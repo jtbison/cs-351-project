@@ -2,54 +2,86 @@
 
 {% block styles %}
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #f0f2f5, #c9d6ff);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+        background: linear-gradient(120deg, #f0f2f5 0%, #c9d6ff 100%);
+        font-family: 'Roboto', sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-
     .content {
         text-align: center;
-        border: 1px solid #ccc;
-        padding: 30px;
         max-width: 400px;
         width: 100%;
-        border-radius: 10px;
-        background-color: #fff;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+        padding: 40px 32px 32px 32px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.18);
     }
-
+    h1 {
+        color: #2e24bb;
+        margin-bottom: 24px;
+        font-size: 2rem;
+        font-weight: 700;
+    }
     .button-column {
         display: flex;
         flex-direction: column;
-        align-items: center;
         gap: 15px;
-        margin: 20px 0;
+        margin: 20px 0 30px 0;
     }
-
-    input.dashboard-btn {
+    .dashboard-btn {
         all: unset;
         display: block;
-        padding: 10px 15px;
-        background-color: #ebf5ff;
-        color: rgb(66, 138, 255);
-        font-weight: bold;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-        width: 200px;
-        text-align: center;
-        border: 1px solid rgb(66, 138, 255);
-    }
-
-    input.dashboard-btn:hover {
-        background-color: #0056b3;
+        width: 100%;
+        padding: 12px 0;
+        background: linear-gradient(90deg, #4CAF50 0%, #3b82f6 100%);
         color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(76,175,80,0.08);
+        transition: background-color 0.2s, transform 0.1s;
+        text-align: center;
+        border: none;
+    }
+    .dashboard-btn:hover, .dashboard-btn:focus {
+        background: linear-gradient(90deg, #3b82f6 0%, #4CAF50 100%);
+        transform: translateY(-2px) scale(1.02);
+        color: #fff;
+    }
+    h2 {
+        color: #333;
+        margin-top: 24px;
+        font-size: 1.1rem;
+        font-weight: 400;
+    }
+    nav a {
+        display: inline-block;
+        margin-top: 18px;
+        color: #3b82f6;
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    nav a:hover {
+        color: #2e24bb;
+        text-decoration: underline;
+    }
+    @media (max-width: 500px) {
+        .content {
+            padding: 24px 8px;
+        }
+        h1 {
+            font-size: 1.2rem;
+        }
     }
 </style>
 {% endblock %}
@@ -62,15 +94,12 @@
         <form action="/repView" method="get">
             <input type="submit" value="View/Edit Representatives" class="dashboard-btn"/>
         </form>
-
         <form action="/report" method="get">
             <input type="submit" value="View Representative Reports" class="dashboard-btn"/>
         </form>
-
         <form action="/customerReport" method="post">
             <input type="submit" value="View Customer Reports" class="dashboard-btn" />
         </form>
-
         <form action="/creditUpdate" method="get">
             <input type="submit" value="Update Customer Credit Limits" class="dashboard-btn" />
         </form>
