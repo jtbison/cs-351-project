@@ -242,6 +242,9 @@ def insertFromFile():
 
 def ensureAdminIsPresent():
     # makes sure there is always at least the default admin account present on startup
+
+    # hardcoded Admin info for simplicity. However, a function for securely registering and storing
+    # a new admin is impemented above as register()
     defaultUsername = "Admin"
     defaultPassword = "supersecret" # very secret indeed XD
     foundDefaultUser = admins.query.filter_by(username=defaultUsername).first()
